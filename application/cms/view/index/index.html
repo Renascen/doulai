@@ -1,0 +1,380 @@
+{extend name="public:base" /}
+{block name="link"}
+<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/index.css" />
+<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+{/block}
+{block name="style"}
+<style type="text/css">
+	.content_tro_title{
+		width: 2.5rem;
+	}
+	.free_tro_msg>span{
+		border: 1px solid #ddd;
+		border-radius: 0.25rem;
+		/*line-height: 0.25rem!important;*/
+	}
+	.new_hid{
+		max-width: 3rem;
+		display:block;
+	}
+	.new_tro:after{
+		content: '';
+		display: block;
+		clear: both;
+	}
+	.see_title_left {
+		background: url(__MODULE_IMG__/img-png/meiribikan.png)no-repeat center left;
+		background-size: 0.32rem 0.32rem;
+	}
+
+	.see_title_right {
+		background: url(__MODULE_IMG__/img-png/gengduo.png)no-repeat center right;
+		background-size: 0.26rem 0.26rem;
+	}
+
+	.hot_title_left {
+		background: url(__MODULE_IMG__/img-png/hot.png)no-repeat center left;
+		background-size: 0.32rem 0.32rem;
+	}
+	.free_title_left {
+		background: url(__MODULE_IMG__/img-png/free.png)no-repeat center left;
+		background-size: 0.32rem 0.32rem;
+	}
+	.new_title_left {
+		background: url(__MODULE_IMG__/img-png/zuixindongman-.png)no-repeat center left;
+		background-size: 0.32rem 0.32rem;
+	}
+	/*.free_tro_msg span {*/
+		/*background: url(__MODULE_IMG__/img-png/fenlei.png)no-repeat center left;*/
+		/*background-size: 0.52rem 0.25rem;*/
+	/*}*/
+
+	.new_autor {
+		background: url(__MODULE_IMG__/img-png/touxiangtubiao.png)no-repeat center left;
+		background-size: 0.31rem 0.31rem;
+	}
+
+	.zan {
+		background: url(__MODULE_IMG__/img-png/zan.png)no-repeat 0 0.05rem;
+		background-size: 0.22rem 0.22rem;
+	}
+
+
+
+	.r_msg {
+		background: url(__MODULE_IMG__/img-png/pinglun.png)no-repeat center left;
+		background-size: 0.22rem 0.22rem;
+	}
+	.see_introdu_one{
+		font-size: 0.28rem;
+	}
+	.list_thr{
+		width:0.8rem;
+	}
+	.list{
+		padding: 0.2rem 0;
+		color:#999999;
+		text-align: center;
+	}
+	.content_tro>img{
+		width: 0.48rem;
+	}
+	/*.free_tro_msg>span{*/
+		/*line-height: 0.28rem;*/
+	/*}*/
+	body{
+		display: none;
+	}
+</style>
+{/block}
+{block name="script"}
+{/block}
+<body>
+	{block name="lunbo"}
+	<!--轮播图-->
+		{if count($banner_list)>0}
+			<div class="mui-slider slide_banner">
+				<div class="mui-slider-group mui-slider-loop">
+
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a onclick="count_click(this)" href="{if !empty($banner_list[3]['url'])}{$banner_list[3]['url']}{else /}javascript:;{/if}" data-id="{$banner_list[3]['id']}" data-tag="1">
+							<img src="{$banner_list[3]['cover']|get_thumb}">
+						</a>
+					</div>
+
+					{volist name="banner_list" id="banner" offset="0" length='4'}
+					<div class="mui-slider-item">
+						<a onclick="count_click(this)" href="{if !empty($banner['url'])}{$banner.url}{else /}javascript:;{/if}" data-id="{$banner.id}" data-tag="1">
+							<img src="{$banner.cover|get_thumb}">
+						</a>
+					</div>
+					{/volist}
+					<!--支持循环，需要重复图片节点,第一个节点-->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a onclick="count_click(this)" href="{if !empty($banner_list[0]['url'])}{$banner_list[0]['url']}{else /}javascript:;{/if}" data-id="{$banner_list[0]['id']}" data-tag="1">
+							<img src="{$banner_list[0]['cover']|get_thumb}">
+						</a>
+					</div>
+				</div>
+			</div>
+		{/if}
+	{/block}
+		<!--导航栏-->
+{block name="main"}
+
+				<!--必看-->
+		{if count($daily_list)>0}
+			<div class="mustSee">
+				<div class="title">
+					<div class="fl title_left see_title_left">
+						<span>每日必看</span>
+					</div>
+					<div class="fr title_right see_title_right">
+						<a href="{:url('index/many',['type'=> $daily_list['tjid']])}">全部</a>
+					</div>
+				</div>
+			{volist name="daily_list" id="vo" length="1"}
+				<div class="see_content">
+					<a href="{:url('cms/document/desc',['id' => $vo.zid,'bid' => $vo['id'],'comefrom'=> 5])}">
+						<img src="{$vo.image|get_thumb}" />
+						<!--<img src="http://www.lce0.com/test/1.jpg" />-->
+					</a>
+				</div>
+				<div class="see_introdu clear">
+					<div class="see_introdu_one clear">
+						<span>{$vo.title}</span>
+						{if condition="$vo['xstype'] gt 0"}
+						<img class="fr" src="__MODULE_IMG__/img-png/wanjie-14.png" alt="" />
+						{else /}
+						<img class="fr" src="__MODULE_IMG__/img-png/lianzai.png" alt="" />
+						{/if}
+					</div>
+					<p class="see_introdu_two font-hid">
+						{$vo.desc}
+					</p>
+				</div>
+			{/volist}
+			</div>
+		{/if}
+
+			<!--热门推荐-->
+	
+			<div class=" hot">
+				<div class="title">
+					<div class="fl title_left hot_title_left">
+						<span>热门推介</span>
+					</div>
+					<div class="fr title_right see_title_right">
+						<a href="{:url('index/many',['type'=> $zhubian_list['tjid']])}">全部</a>
+					</div>
+				</div>
+				<div class="hot_content">
+					{volist name="zhubian_list" id="hot" offset="0" length='4'}
+					<div class="content_list">
+						<a href="{:url('cms/document/desc',['bid' => $hot['id'],'comefrom'=> 5])}">
+							<img src="{$hot.image|get_thumb}" />
+							<div class="clear content_tro">
+								<p class="font-hid content_tro_title fl">{$hot.title}</p>
+								{if condition="$hot.xstype gt 0"}
+								<img class="fr" src="__MODULE_IMG__/img-png/wanjie-14.png" alt="" />
+								{else/}
+								<img class="fr" src="__MODULE_IMG__/img-png/lianzai.png" alt="" />
+								{/if}
+							</div>
+
+							<p class="font-hid content_tro_msg clear">{$hot.desc}</p>
+						</a>
+					</div>
+					{/volist}
+				</div>
+			</div>
+		
+
+
+		<!--免费专区-->
+	
+			<div class="free">
+				<div class="title">
+					<div class="fl title_left free_title_left">
+						<span>免费专区</span>
+					</div>
+					<div class="fr title_right see_title_right">
+						<a href="{:url('index/many',['type'=> $Gratis['tjid']])}">全部</a>
+					</div>
+				</div>
+				<div class="free_content">
+
+					{volist name="Gratis" id= "vo" length="6"}
+					<div class="free_content_list">
+						<a href="{:url('cms/document/desc',['bid' => $vo['id'],'comefrom'=> 5])}">
+							<img class="free_pic" src="{$vo.image|get_thumb}" />
+							<p class="font-hid free_tro_title fl">{$vo.title}</p>
+							<p class="font-hid free_tro_msg clear">
+								{volist name="$vo.tag" id="mo" length="3"}
+								<span>{$mo}</span>
+								{/volist}
+							</p>
+						</a>
+					</div>
+					{/volist}
+				</div>
+			</div>
+
+	<!--<span class="font-hid new_hid fl">黄金气球asdasdsadadsadadadad</span>-->
+
+
+
+
+		<!--最新动漫-->
+		<div class="new">
+			<div class="title">
+				<div class="fl title_left new_title_left">
+					<span>最新漫画</span>
+				</div>
+				<div class="fr title_right see_title_right">
+					<a href="{:url('index/many',['type'=> $free_book['tjid']])}">全部</a>
+				</div>
+			</div>
+			<div class="new_content">
+				{volist name="free_book" id="vo" length="2"}
+				<div class="new_list">
+					<input type="hidden" value="{$vo.id}">
+					<a href="{:url('cms/document/desc',['bid' => $vo['id'],'comefrom'=> 5])}" class="clear">
+						<img class="fl" src="{$vo.image|get_thumb}" alt="" />
+						<div class="fr new_tro">
+							<h3 class="new_title font-hid">
+								<span class="font-hid new_hid fl">{$vo.title}{$vo.rec[0]}</span>
+								{if condition="$vo.xstype eq 0"}
+								<img src="__MODULE_IMG__/img-png/wanjie-14.png" alt="" />
+								{elseif condition="$vo.xstype eq 1" /}
+								<img src="__MODULE_IMG__/img-png/lianzai.png" alt="" />
+								{else/}
+								<img src="__MODULE_IMG__/img-png/mianfei.png" alt="" />
+								{/if}
+						</h3>
+							<p class="new_msg dou_hang">{$vo.desc}</p>
+							<div class="new_change">
+								<div class="new_autor fl">{$vo.zuozhe}</div>
+								<div class="new_reply fl">
+									<p class="zan">{$vo.view}</p>
+									<p class="r_msg">{$vo.num}</p>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+				{/volist}
+			</div>
+		</div>
+
+	</body>
+{/block}
+{block name="page-script"}
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+<script type="text/javascript">
+    window.onload=function(){
+        document.querySelector('body').style.display="block";
+    }
+
+    //获得slider插件对象
+    var gallery = mui('.mui-slider');
+
+    gallery.slider({
+        interval: 2000 //自动轮播周期，若为0则不自动播放，默认为0；
+    });
+    function count_click(obj){
+        var tag = $(obj).data('tag');
+        var subid = $(obj).data('id');
+        $.ajaxSettings.async = false
+        $.post('{:url("cms/common/count_click")}', {'tag': tag, 'subid': subid});
+
+    }
+    var str =[];
+    $(document).ready(function () {
+        var one =$(".new_list").eq(0).find('input').val();
+        var two =$(".new_list").eq(1).find('input').val();
+        str = [one,two]
+
+    })
+    $(function(){
+        var cursor = 0;
+        var limit  = 5;
+        var loading = false;
+        var completed = false;
+
+
+        $(document.body).infinite(50).on('infinite', function () {
+            if (loading || completed) {
+                return false;
+            }
+            loadCatalogEntries(cursor);
+        });
+
+        function loadCatalogEntries(start) {
+            loading = true;
+            return $.post("/index.php/cms/index", {start:start,limit:limit,ids:str}, function(data){
+                	if (data.msg == 0){
+                        $(document.body).destroyInfinite();
+                        $('.list').remove();
+                        $('.new_content').append('<div class="list">已加载完毕</div>');
+                        return false;
+					}
+
+//                	var len = 0;
+                    $.each(data, function (index, item) {
+                        //循环获取数据
+                        var id = item.id;
+                        var author = item.zuozhe;
+                        var desc = item.desc;
+                        var title= item.title;
+                        var img = item.image;
+                        var view = item.view;
+                        var num = item.num
+						var serial = '';
+                        if (item.xstype == 0){
+                            serial = '__MODULE_IMG__/img-png/wanjie-14.png'
+						}else if(item.xstype == 1){
+                            serial = '__MODULE_IMG__/img-png/lianzai.png'
+						}else{
+                            serial = '__MODULE_IMG__/img-png/mianfei.png'
+						}
+                        $(".new_content").append("<div class=\"new_list\">\n" +
+                            "<a href=\"/index.php/cms/document/desc/bid/"+id+"/comefrom/5.html\" class=\"clear\">\n" +
+                            "<img class=\"fl\" src="+img+" alt=\"\" />\n" +
+                            "<div class=\"fr new_tro\">\n" +
+                            "<h3 class=\"new_title font-hid\">\n" +
+                            "<span class=\"font-hid new_hid fl\">"+title+"</span>"+
+                            "<img src=\""+serial+"\" alt=\"\" />\n" +
+                            "</h3>\n" +
+                            "<p class=\"new_msg dou_hang\">"+desc+"</p>\n" +
+                            "<div class=\"new_change\">\n" +
+                            "<div class=\"new_autor fl\">"+author+"</div>\n" +
+                            "<div class=\"new_reply fl\">\n" +
+                            "<p class=\"zan\">"+view+"</p>\n" +
+                            "<p class=\"r_msg\">"+num+"</p>\n" +
+                            "</div>\n" +
+                            "</div>\n" +
+                            "</div>\n" +
+                            "</a>\n" +
+                            "</div>");
+//                        len++
+                    });
+                    cursor = cursor + 5;
+                    loading = false;
+
+            })
+        }
+	})
+
+
+
+
+
+
+</script>
+<script>
+
+</script>
+{/block}
+
+

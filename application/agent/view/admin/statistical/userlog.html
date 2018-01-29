@@ -1,0 +1,128 @@
+{extend name="$_admin_base_layout" /}
+
+{block name="content"}
+   
+   <div class="row" id="member-summary-stats-panel">
+    <div class="col-md-3">
+        <div class="well">
+            <b>
+                今日新增用户
+            </b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                <span data-bind="text: stats_today.new_member_count">{$today['user_num']}</span>
+                <div style="font-size:13px; line-height: 30px" class="text-muted">
+                    男性：<b class="text-warning" data-bind="text: stats_today.male_count">{$today['user_man']}</b> <br>
+                    女性：<b class="text-warning" data-bind="text: stats_today.female_count">{$today['user_women']}</b>
+                    <br>
+                    未知：<b class="text-warning" title="用户未设置性别或未关注而无法获取性别" data-bind="text: stats_today.new_member_count() - stats_today.male_count() - stats_today.female_count()">{$today['user_weizhi']}</b>
+                </div>
+            </div>
+            <div>
+                <div>
+                    已付费用户:
+                    <b class="text-warning">
+                        <span data-bind="text: stats_today.paid_count">{$today['user_xiaofei']}</span>
+                    </b>
+                </div>
+                <p style="padding: 10px 0 0 0 ">提示：“未知”的定义为用户未设置性别或未关注而无法获取性别</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="well">
+            <b>昨日新增</b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                <span data-bind="text: stats_today.new_member_count">{$yesterday['user_num']}</span>
+                <div style="font-size:13px; line-height: 30px" class="text-muted">
+                    男性：<b class="text-warning" data-bind="text: stats_today.male_count">{$yesterday['user_man']}</b> <br>
+                    女性：<b class="text-warning" data-bind="text: stats_today.female_count">{$yesterday['user_women']}</b>
+                    <br>
+                    未知：<b class="text-warning" title="用户未设置性别或未关注而无法获取性别" data-bind="text: stats_today.new_member_count() - stats_today.male_count() - stats_today.female_count()">{$yesterday['user_weizhi']}</b>
+                </div>
+            </div>
+            <div>
+                <div>
+                    已付费用户:
+                    <b class="text-warning">
+                        <span data-bind="text: stats_today.paid_count">{$yesterday['user_xiaofei']}</span>
+                    </b>
+                </div>
+                <p style="padding: 10px 0 0 0 ">提示：“未知”的定义为用户未设置性别或未关注而无法获取性别</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="well">
+            <b>本月新增  <i class="fa fa-question-circle" ></i></b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                <span data-bind="text: stats_today.new_member_count">{$month['user_num']}</span>
+                <div style="font-size:13px; line-height: 30px" class="text-muted">
+                    男性：<b class="text-warning" data-bind="text: stats_today.male_count">{$month['user_man']}</b> <br>
+                    女性：<b class="text-warning" data-bind="text: stats_today.female_count">{$month['user_women']}</b>
+                    <br>
+                    未知：<b class="text-warning" title="用户未设置性别或未关注而无法获取性别" data-bind="text: stats_today.new_member_count() - stats_today.male_count() - stats_today.female_count()">{$month['user_weizhi']}</b>
+                </div>
+            </div>
+            <div>
+                <div>
+                    已付费用户:
+                    <b class="text-warning">
+                        <span data-bind="text: stats_today.paid_count">{$month['user_xiaofei']}</span>
+                    </b>
+                </div>
+                <p style="padding: 10px 0 0 0 ">提示：“未知”的定义为用户未设置性别或未关注而无法获取性别</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="well">
+            <b>所有时间 <i class="fa fa-question-circle" ></i></b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                <span data-bind="text: stats_today.new_member_count">{$all['user_num']}</span>
+                <div style="font-size:13px; line-height: 30px" class="text-muted">
+                    男性：<b class="text-warning" data-bind="text: stats_today.male_count">{$all['user_man']}</b> <br>
+                    女性：<b class="text-warning" data-bind="text: stats_today.female_count">{$all['user_women']}</b>
+                    <br>
+                    未知：<b class="text-warning" title="用户未设置性别或未关注而无法获取性别" data-bind="text: stats_today.new_member_count() - stats_today.male_count() - stats_today.female_count()">{$all['user_weizhi']}</b>
+                </div>
+            </div>
+            <div>
+                <div>
+                    已付费用户:
+                    <b class="text-warning">
+                        <span data-bind="text: stats_today.paid_count">{$all['user_xiaofei']}</span>
+                    </b>
+                </div>
+                <p style="padding: 10px 0 0 0 ">提示：“未知”的定义为用户未设置性别或未关注而无法获取性别</p>
+            </div>
+        </div>
+    </div>
+</div>
+   
+   
+
+{// 额外HTML代码 }
+{$extra_html|default=''}
+{/block}
+
+{block name="style"}
+    {volist name="css_list" id="vo"}
+    <link rel="stylesheet" href="__MODULE_CSS__/{$vo}.css">
+    {/volist}
+
+    {// 额外CSS代码 }
+    {$extra_css|default=''}
+{/block}
+
+{block name="script"}
+
+    {volist name="js_list" id="vo"}
+    <script src="__MODULE_JS__/{$vo}.js"></script>
+    {/volist}
+
+    {// 额外JS代码 }
+    {$extra_js|default=''}
+{/block}

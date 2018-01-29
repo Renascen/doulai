@@ -1,0 +1,199 @@
+{extend name="public:base"}
+		<title>{block name="title"}{:config('web_site_title')}{/block}</title>
+		{block name="link"}
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/recharge.css" />
+<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+		{/block}
+{block name="style"}
+	<style>
+		body{
+			display: none;
+		}
+		.list_thr {
+			width: 0.80rem!important;
+			height: 0.35rem;
+		}
+	</style>
+{/block}
+{block name="nav"}{/block}
+{block name="main"}
+		<div class="money">
+			<img src="__MODULE_IMG__/img-png/jinbi.png" alt="" />
+			<span class="money_tro">书币余额 :</span>
+			<span class="money_num">{$usercoin}币</span>
+		</div>
+		
+		<div class="recharge_content">
+			<div class="recharge_title">
+				充值金额<span>（1元＝100书币）</span>
+			</div>
+			<div class="recharge_c">
+				{volist name="pro" id="vo"}
+				<div class="recharge_center">
+					<div class="recharge_list {if empty($noselect)}
+                                     {if $k==1} active{/if}
+                                  {else /}
+                                    {if $vo.status==1} active{/if}
+                                  {/if}" data-pid="{$vo.id}" data-welth="{$vo.score}" >
+						<h3 class="list_b font-hid">{$vo.titilea}</h3>
+						<p class="list_s font-hid">{$vo.titileb}</p>
+						<div class="list_c">
+							<a href="javascript:void(0);"><span>{$vo.titilec}</span></a>
+						</div>
+					</div>
+				</div>
+				{/volist}
+			</div>
+		</div>
+
+		<!--立即充值-->
+		<div class="Confirm" style="margin:0.4rem auto 0;border-radius:0.1rem;width: 6.77rem;height: 0.85rem;color: #fff;background-color: #FF5448;font-size: 0.36rem;text-align: center;line-height: 0.85rem;">
+			立即充值
+		</div>
+
+
+		<div class="explain">
+			<p class="e_1">说明：</p>
+			<p class="e_2">1.1元＝100书币</p>
+			<p class="e_3">2.所充值金额暂时不支持退款或者提现。如充值遇到问题， 请关注微信公众号：［zssqnb］我们会及时为您服务。</p>
+			<p class="e_4">客服时间：周一至周日00:00-24:00</p>
+		</div>
+{/block}
+{block name="page-script"}
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+	<script type="text/javascript">
+			window.onload=function(){
+				document.querySelector('body').style.display="block";
+			}
+
+			$(".recharge_content").on('click',".recharge_center",function(){
+				$(".recharge_list").removeClass('choose');
+				$(this).find('.recharge_list').addClass("choose");
+			})
+
+//
+            $(function () {
+                var cid = '{$chapterId}';
+                var packsell = '{$book["packsell"]}';
+                function jsApiCall(json){
+                    WeixinJSBridge.invoke(
+                        'getBrandWCPayRequest',
+                        json,
+                        function(res){
+                            //WeixinJSBridge.log(res.err_msg);
+                            //alert(res.err_code+res.err_desc+res.err_msg);
+                            if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                                //alert('支付成功。');
+                                var url = '/index.php/cms/pay/index.html?bid={$bookid}&cid={$chapterId}';
+                                if(cid != '' && cid > 0){
+                                    url = '/index.php/cms/document/detail/id/' + cid;
+                                }
+                                if(packsell == 1 || packsell == '1'){
+                                    $.post('/index.php/cms/pay/paybybook', {bid:'{$book.id}', zid:cid,packsell:true}, function(res){
+                                        if(res.status != 4){
+                                            location.reload();
+                                        }else{
+                                            $.toast('购买成功');
+                                            location.href = '/index.php/cms/document/detail/id/' + cid;
+                                        }
+                                        return false;
+                                    });
+                                }else{
+                                    location.href = url;
+                                }
+                            }else{
+                                //alert(res.errMsg);
+                                if(res.err_msg == "get_brand_wcpay_request:cancel"){
+                                    //alert('支付取消!');
+//                                    $.modal({
+//                                        title: '取消支付',
+//                                        text: '支付已取消',
+//                                        buttons: [{
+//                                            text: '确定',
+//                                            className: 'default',
+//                                            onClick: function () {
+//                                                submitting = false;
+//                                            }
+//                                        }
+//                                        ]
+//                                    });
+                                    mui.alert("支付已取消","提示","确定",function () {
+										window.location.reload();
+                                    });
+                                    //window.history.go(-1);
+                                }else{
+                                    //alert("支付失败，请返回重试。");
+//                                    $.modal({
+//                                        title: '支付失败',
+//                                        text: '支付失败，请重新选择进行支付',
+//                                        buttons: [{
+//                                            text: '确定',
+//                                            className: 'default',
+//                                            onClick: function () {
+//                                                submitting = false;
+//                                            }
+//                                        }
+//                                        ]
+//                                    });
+                                    mui.alert("支付失败，请重新选择进行支付","支付失败","确定",function () {
+                                        window.location.reload();
+                                    });
+                                    //window.history.go(-1);
+                                }
+                            }
+                        }
+                    );
+                }
+                function callpay(json) {
+                    if (typeof WeixinJSBridge == "undefined"){
+                        if( document.addEventListener ){
+                            document.addEventListener('WeixinJSBridgeReady', jsApiCall(json), false);
+                        }else if (document.attachEvent){
+                            document.attachEvent('WeixinJSBridgeReady', jsApiCall(json));
+                            document.attachEvent('onWeixinJSBridgeReady', jsApiCall(json));
+                        }
+                    }else{
+                        jsApiCall(json);
+                    }
+                }
+                var articleId = null;
+                var returnUrl = '';
+                var tradeType = '';
+                var submitting = false;
+                $('#products-grid .product-item').click(function () {
+                    $('#products-grid .product-item').removeClass('active');
+                    $(this).addClass('active');
+                });
+                $('.Confirm').on('click',function () {
+                    if (submitting) {
+                        return false;
+                    }
+                    submitting = true;
+                    var productId = $('.choose').attr('data-pid');
+
+//                     定义支付请求链接
+                    var url = "/index.php/cms/pay/pay.html?id=" + productId + "&bid=" + "{$bookid}";
+
+                    if (articleId) {
+                        url += '&aid=' + articleId;
+                    }
+                    if (tradeType) {
+                        url += '&trade_type=' + tradeType;
+                    }
+                    if (returnUrl) {
+                        url += '&return=' + encodeURIComponent(returnUrl);
+                    }
+                    if ({$zffs}==1) {
+                        $.post(url,{},function(resu){
+                            var jsonObj=JSON.parse(resu);
+                            callpay(jsonObj);
+                        })
+                    }
+                    return false;
+                })
+            })
+
+		$(".recharge_list").eq(0).addClass('choose')
+
+	</script>
+{/block}

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>搜索</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+	<meta content="telephone=no" name="format-detection" />
+	<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/base.css" />
+	<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/mui.min.css" />
+	<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/many.css" />
+	<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+	<script src="__MODULE_JS__/fontSize.js"></script>
+	<style type="text/css">
+		.search_kuang{
+			background: url(__MODULE_IMG__/img-png/suosuokuang.png)no-repeat center left;
+			background-size: 5.75rem 0.7rem;
+		}
+		.list_zan{
+			background: url(__MODULE_IMG__/img-png/zan.png)no-repeat center left;
+			background-size: 0.20rem 0.20rem;
+		}
+		.list_msg{
+			background: url(__MODULE_IMG__/img-png/pinglun.png)no-repeat center left;
+			background-size: 0.20rem 0.20rem;
+		}
+		.search_empty{
+			/*display: block;*/
+			width: 3.07rem;
+			height: 3.5rem;
+			margin: 0 auto;
+
+		}
+		.search_list{
+			position: relative;
+		}
+		.removek{
+			position: absolute;
+			right: 0.1rem;
+			top: 0.1rem;
+			z-index: 100;
+			width: 0.8rem;
+			height: 0.8rem;
+			text-align: right;
+		}
+		.removeHis{
+			width: 0.48rem!important;
+			height: 0.48rem!important;
+		}
+		.list{
+			padding: 0.2rem 0;
+			color:#999999;
+			text-align: center;
+		}
+		.mui-toast-message{
+			margin-bottom: 4.5rem;
+		}
+		.search {
+			position: fixed;
+			left:0;
+			top: 0;
+		}
+		.search_content{
+			position: fixed;
+			top:1.3rem;
+			left:0;
+			width: 100%;
+			height:100%;
+			overflow-y: scroll;
+			padding-bottom: 1.5rem;
+			/*overflow:auto; winphone8和android4+ */
+			-webkit-overflow-scrolling: touch; /* ios5+ */
+		}
+		.search_empty{
+			padding-top: 1.3rem;
+		}
+	</style>
+</head>
+<body>
+<!--搜索框-->
+<div class="search">
+	<div class="search_kuang clear">
+		<input type="text" class="fl inp_search"/>
+		<button class="btn_search fr"></button>
+	</div>
+	<a href="{:url('index/index')}"><span class="fr btn_cancel">取消</span></a>
+</div>
+<!--搜索内容区域-->
+<div class="search_content content_one">
+
+	<!--没有搜索内容-->
+
+</div>
+<div class="search_content content_two" style="display: none;">
+
+</div>
+
+<div class="search_empty" style="width:100%;text-align: center;display:none">
+	<img src="__MODULE_IMG__/img-big/search_empty.png" alt="" style="width:30%" />
+	<div style="padding:10px 0px;color:#C9C9C9">暂无记录，换个关键词试试吧！</div>
+</div>
+
+</body>
+<script src="__MODULE_JS__/mui.js"></script>
+<script src="__MODULE_JS__/jquery-1.8.3.min.js"></script>
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+<script type="text/javascript">
+    $(".btn_cancel").click(function(){
+        $(".inp_search").val("");
+    })
+    //过滤特殊字符
+    function str(s) {
+        var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]")
+        var rs = "";
+        for (var i = 0; i < s.length; i++) {
+            rs = rs + s.substr(i, 1).replace(pattern, '');
+        }
+        return rs;
+    }
+    $(function(){
+    //搜索
+
+
+
+    //ajax
+
+        var btnVal="";
+        var page = 0;
+        var cursor = 0;
+        var limit  = 10;
+        var loading = false;
+        var completed = false;
+        var loadingT=false;
+        var completedT=false;
+        //var start = 0;
+        loadCatalogEntries(cursor);
+
+        $(".content_one").infinite(50).on('infinite', function () {
+            if (loading || completed) {
+                return false;
+            }
+            loadCatalogEntries(cursor);
+        });
+        $(".content_two").infinite(50).on('infinite', function () {console.log(loadingT,completedT);
+            if (loadingT || completedT) {
+
+                return false;
+            }
+            loderSearch(page);
+        })
+
+
+
+
+
+        function loadCatalogEntries(start) {
+            $('.search_empty').hide();
+            loading = true;
+
+             $.ajax({
+                type: 'POST',
+                url: '/index.php/cms/search/getsearch',
+                data: {start: start, limit: limit},
+                dataType:'json',
+                success: function (data) {
+
+                    $.each(data, function () {
+                        var item = this;
+                        var url = '/index.php/cms/document/desc/bid/' + item.id + '';
+                        var cc = '';
+                        $.each(item.tag, function (index, v) {
+                            if (index == 4) {		//关键字个数
+                                return false;
+                            }
+                            cc += "<span>" + v + "</span>"
+                        })
+                        $('.content_one').append('<div class="search_list">\n' +
+                            '<input type="hidden" value="' + item.id + '">' +
+                            '\t\t\t\t<a href="' + url + '">\n' +
+                            '<input type="hidden" value="' + item.id + '">' +
+                            '\t\t\t\t\t<div class="fl search_img">\n' +
+                            '\t\t\t\t\t\t<img src="' + item.image + '"/>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t<div class="fl search_list_r">\n' +
+                            '\t\t\t\t\t\t<p class="list_r_one">' + item.title + '</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_two">\n' +
+                            cc +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_thr">\n' +
+                            '\t\t\t\t\t\t\t<img src="__MODULE_IMG__/img-png/touxiangtubiao.png"/>\n' +
+                            '\t\t\t\t\t\t\t' + item.zuozhe + '\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_four">\n' +
+                            '\t\t\t\t\t\t\t<span class="list_zan">' + item.view + '</span>\n' +
+                            '\t\t\t\t\t\t\t<span class="list_msg">' + item.comment + '</span>\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t</a>\n' +
+                            '\t<div class="removek del">\n' +
+                            '\t\t\t\t\t<img src="__MODULE_IMG__/delt.png"  class="removeHis" alt="" />\n' +
+                            '\t\t\t\t</div>' +
+                            '\t\t\t</div>'
+                        )
+                    });
+                    var len = 0;
+                    if (data) {
+                        len = data.length
+                    }
+
+                    cursor = cursor + len;
+                 //   repeatStart=cursor;
+                    completed = len === 0;
+                   // console.log("c"+completed,"len"+len,"cursor"+cursor);
+
+                    loading = false;
+                    if (len === 0 && $(".content_one").length == 0) {
+                        $('.search_empty').show();
+                        $(".content_one").hide();
+                        return false
+                    }
+                    if (completed&& $(".content_one").length != 0) {
+                        $(".content_one").destroyInfinite();
+                        $(".list").remove()
+                        $('.content_one').append('<div class="list">已加载完毕</div>');
+                        return false
+                    }
+
+                }
+            })
+        }
+
+        function loderSearch(start){
+            loadingT = true;
+            $.ajax({
+                'url' : "{:url('/cms/search/index')}",
+                'type' : 'POST',
+                'data' : {'keyword':btnVal,'start':start},
+                'dataType' : 'json',
+                'success': function(data) {
+                    if (start == 0 && data.data.length==0) {
+                        $('.search_empty').show();
+                        $(".content_one").hide();
+                        $('.content_two').hide();
+                        return false
+                    }
+                    $.each( data.data , function(){
+                        var item = this;
+                        var url='/index.php/cms/document/desc/bid/'+item.id+'';
+                        var cc ='';
+                        $.each(item.tag, function (index,v) {
+                            if (index == 4){
+                                return false;
+                            }
+                            cc += "<span>"+v+"</span>"
+                        })
+                        var _s = '<div class="search_list">\n' +
+                            '<input type="hidden" value="' + item.id + '">' +
+                            '\t\t\t\t<a href="'+url+'">\n' +
+                            '\t\t\t\t\t<div class="fl search_img">\n' +
+                            '\t\t\t\t\t\t<img src="'+item.image+'"/>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t<div class="fl search_list_r">\n' +
+                            '\t\t\t\t\t\t<p class="list_r_one">'+item.title+'</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_two">\n' +
+                            cc+
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_thr">\n' +
+                            '\t\t\t\t\t\t\t<img src="__MODULE_IMG__/img-png/touxiangtubiao.png"/>\n' +
+                            '\t\t\t\t\t\t\t'+item.zuozhe+'\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_four">\n' +
+                            '\t\t\t\t\t\t\t<span class="list_zan">'+item.view+'</span>\n' +
+                            '\t\t\t\t\t\t\t<span class="list_msg">'+item.comment+'</span>\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t</a>\n' +
+                            '\t\t\t</div>';
+
+                        $('.content_two').append(_s);
+
+                    });
+                    var len = 0;
+                    if (data.data.length != 0) {
+                        len = data.data.length
+                    }
+                    page = page + len;
+                    completedT = len === 0;
+
+                    loadingT = false;
+                    if (completedT) {
+                       // $(".content_two").destroyInfinite();
+                        $(".list").remove()
+                        $('.content_two').append('<div class="list">已加载完毕</div>');
+                       // return false
+
+                    }
+
+                }
+            });
+
+        }
+
+
+        $(".btn_search").click(function(){
+            btnVal=str($(".inp_search").val());//过滤了特殊字符的值
+            if(!btnVal){
+                mui.toast('书名不能为空');
+                return false;
+            }
+            $('.search_empty').hide();
+            $(".content_one").remove();
+            $(".content_two").show();
+            $(".content_two").html('');
+            loadingT=false;
+            completedT=false;
+            page = 0;
+            loderSearch(page);
+            $('.content_two').show();
+        })
+
+        // 删除历史记录
+        $(".search_content ").on('click','.del',function (e) {
+            e.stopPropagation();
+            var length = $(".search_content .search_list").length;
+            length = parseInt(length) - 1
+            var del = $(this)
+            var id  = del.prevAll('a').children().eq(0).val() ;
+            // ajax
+            var url = '/index.php/cms/search/del';
+            $.get(
+                url,{id:id},function (data) {
+                    if(data.code == 1){
+                        del.parent().remove();
+                    }
+                }
+            )
+
+            // 如果页面上没有任何的记录
+            if (length == 0){
+                // 页面上有加载完毕提示
+                if ($(".list").html() != undefined){
+                    $(".list").remove();
+                    $('.search_empty').show();
+                    return false
+                }
+                $('.content_one').hide();
+                // 发送请求获取历史记录
+                $.post('/index.php/cms/search/search', {start:start,limit:limit}, function(data) {
+                    // 如果返回的数据为空
+                    if (data.length==0){
+                        $(".list").remove()
+                        $('.search_empty').show();
+                        return false
+
+                    }
+                    $.each(data, function () {
+                        var item = this;
+                        var url = '/index.php/cms/document/desc/bid/' + item.id + '';
+                        var cc = '';
+                        $.each(item.tag, function (index, v) {
+                            if (index == 4) {
+                                return false;
+                            }
+                            cc += "<span>" + v + "</span>"
+                        })
+                        $('.search_content').append('<div class="search_list">\n' +
+                            '\t\t\t\t<a href="' + url + '">\n' +
+                            '<input type="hidden" value="' + item.id + '">' +
+                            '\t\t\t\t\t<div class="fl search_img">\n' +
+                            '\t\t\t\t\t\t<img src="' + item.image + '"/>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t<div class="fl search_list_r">\n' +
+                            '\t\t\t\t\t\t<p class="list_r_one">' + item.title + '</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_two">\n' +
+                            cc +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_thr">\n' +
+                            '\t\t\t\t\t\t\t<img src="__MODULE_IMG__/img-png/touxiangtubiao.png"/>\n' +
+                            '\t\t\t\t\t\t\t' + item.zuozhe + '\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_four">\n' +
+                            '\t\t\t\t\t\t\t<span class="list_zan">' + item.view + '</span>\n' +
+                            '\t\t\t\t\t\t\t<span class="list_msg">' + item.comment + '</span>\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t</a>\n' +
+                            '\t<div class="removek del">\n' +
+                            '\t\t\t\t\t<img src="__MODULE_IMG__/delt.png"  class="removeHis" alt="" />\n' +
+                            '\t\t\t\t</div>' +
+                            '\t\t\t</div>'
+                        )
+                    });
+                    start++
+                },'json')
+
+            }
+
+
+        })
+    })
+
+    $(".search_content").on('click','.search_list',function () {
+        var id = $(this).find('input').attr('value')
+        var type = 1
+        $.get('/index.php/cms/search/index',{id:id,type:type});
+    })
+
+
+</script>
+</html>

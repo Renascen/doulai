@@ -1,0 +1,169 @@
+{extend name="public:base" /}
+
+		<title>{block name="title"}更多{/block}</title>
+
+		{block name="link"}
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/many.css" />
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/index.css" />
+		<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+		{/block}
+		{block name="style"}
+		<style type="text/css">
+			.search_kuang{
+				background: url(img/img-png/suosuokuang.png)no-repeat center left;
+				background-size: 5.75rem 0.7rem;
+			}
+			/*.list_r_two>span{*/
+				/*background: url(__MODULE_IMG__/img-png/fenlei.png)no-repeat center left;*/
+				/*background-size: 0.52rem 0.25rem;*/
+			/*}*/
+			.list_zan{
+				background: url(__MODULE_IMG__/img-png/zan.png)no-repeat center left;
+				background-size: 0.20rem 0.20rem;
+			}
+			.list_msg{
+				background: url(__MODULE_IMG__/img-png/pinglun.png)no-repeat center left;
+				background-size: 0.20rem 0.20rem;
+			}
+			.search_content{
+				margin-top: 0.85rem;
+			}
+			.list{
+				color:#999999;
+				text-align: center;
+			}
+			/*.list_r_two>span{*/
+				/*width:1rem;*/
+				/*font-size:0.01rem;*/
+				/*margin-right: -0.1rem;*/
+			/*}*/
+			/*.list_r_two>span{*/
+				/*background:url(/public/static/cms/img/img-png/fenlei.png)no-repeat center center;*/
+				/*background-size:0.52rem 0.25rem;*/
+			/*}*/
+			.list_thr {
+				width: 0.8rem;
+				height: 0.35rem;
+			}
+			.list_r_thr{
+				margin-top: 0.15rem;
+			}
+			.list_r_four{
+				margin-top: 0.1rem;
+			}
+			body{
+				display: none;
+			}
+		</style>
+		{/block}
+	{block name="nav"}{/block}
+	{block name="main"}
+	<body>
+		<div class="search_content">
+
+			<input type="hidden" class="type" value="">
+
+		</div>
+	</body>
+	{/block}
+	{block name="page-script"}
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+<script>
+window.onload=function(){
+    document.querySelector('body').style.display="block";
+}
+    $(function(){
+
+
+        var test = window.location.href;
+		var str = test;
+        var index = str .lastIndexOf("\/");
+        str  = str .substring(index + 1, str .length);
+        str=str.split(".");
+
+
+
+        $(".type").val(str[0]);
+        var cursor = 0;
+        var limit  = 10;
+        var loading = false;
+        var completed = false;
+        var type = str[0];
+
+        loadCatalogEntries(type,cursor);
+
+        $(document.body).infinite(50).on('infinite', function () {
+            if (loading || completed) {
+                return false;
+            }
+            loadCatalogEntries(type,cursor);
+        });
+
+        function loadCatalogEntries(type,start) {
+            loading = true;
+            return $.get("/index.php/cms/index/many",{type:type , start:start ,limit:limit}, function(data){
+                    var spa = '';
+                    $.each(data, function (index, item) {
+                        $.each(data[index].tag,function (index,item) {
+                            if (index ==4) {
+                                return false
+                            }
+                            spa  +='<span>'+item+'</span>';
+                        })
+						//循环获取数据
+                        var url = '/index.php/cms/document/desc/bid/' + item.id + '';
+						var view = item.view
+                        var num = item.num
+                        var author = item.zuozhe;
+                        var title= item.title;
+                        var img = item.image;
+                        $(".search_content").append('<div class="search_list">\n' +
+                            '\t\t\t\t<a href="'+url+'">\n' +
+                            '\t\t\t\t\t<div class="fl search_img">\n' +
+                            '\t\t\t\t\t\t<img src="'+img+'"/>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t<div class="fl search_list_r">\n' +
+                            '\t\t\t\t\t\t<p class="list_r_one">'+title+'</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_two">\n'
+                            +spa+
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_thr">\n' +
+                            '\t\t\t\t\t\t\t<img src="__MODULE_IMG__/img-png/touxiangtubiao.png"/>\n' +
+                            '\t\t\t\t\t\t\t'+ author +'\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t<p class="list_r_four">\n' +
+                            '\t\t\t\t\t\t\t<span class="list_zan">'+view+'</span>\n' +
+                            '\t\t\t\t\t\t\t<span class="list_msg">'+num+'</span>\n' +
+                            '\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t</a>\n' +
+                            '\t\t\t</div>');
+                        spa = '';
+                    });
+                var len = 0;
+                if(data){
+                    len = data.length
+                }
+                cursor = cursor+len;
+                completed = len === 0;
+                loading = false;
+                if (completed) {
+                    $(document.body).destroyInfinite();
+                    $(".list").remove()
+                    $(".search_content").append("<div class='list' style='padding: 0.2rem 0;'>已经到底了哦~</div>")
+                }
+            })
+        }
+    })
+
+
+
+	function GetQueryString(name)
+	{
+		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if(r!=null)return  unescape(r[2]); return null;
+	}
+</script>
+	{/block}
+

@@ -1,0 +1,92 @@
+{extend name="public:base"}
+		<title>{block name="title"}充值记录{/block}</title>
+		{block name="link"}
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/record.css" />
+<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+		{/block}
+{block name="style"}
+<style type="text/css">
+    .list{
+        color:#c9c9c9;box-sizing:border-box;text-align: center;
+    }
+</style>
+{/block}
+
+{block name="nav"}{/block}
+{block name="main"}
+		<section id="section">
+
+			{if empty($payhistory)}
+
+			{else /}
+
+			{/if}
+		</section>
+{/block}
+{block name="page-script"}
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+<script>
+    var apiurl = '/index.php/cms/user/payhistory';
+    var cursor = 0;
+    var loading = false;
+    var limit = 10;
+    var completed = false;
+
+    loadList(cursor);
+    $(document.body).infinite(50).on('infinite', function () {
+        if (loading || completed) {
+            return false;
+        }
+
+        loadList(cursor);
+    });
+
+    function loadList(start) {
+        loading = true;
+        return $.get(apiurl, {start: start, limit: limit}, function (ret) {
+            // 如果第一次加载没有数据
+            if (start==0 && ret==''){
+                $(".list").remove()
+                $("#section").append("<div style='color:#c9c9c9;box-sizing:border-box;text-align: center;'>当前没有充值记录</div>");
+                return false
+            }
+            $.each(ret, function () {
+                var entry = this;
+                var score =  parseInt(entry.coin) + parseInt(entry.score)
+                $('#section').append(
+                   '<div class="list">'+
+                    '<a href="javascript:void(0);">' +
+                    '<div class="fl list_l">' +
+                    '<img class="fl list_img" src="__MODULE_IMG__/img-png/weixintubiao.png" alt="" />' +
+                    '<div class="fl list_msg">' +
+                    '<h3 class="list_title">'+entry.money+'元</h3>' +
+                    '<p class="list_time">'+entry.paytime+'</p>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="fr list_r">' +
+                    '<p>' +
+                    '<span class="list_m">+'+score+'</span>' +
+                    '<span class="list_v">书币</span>' +
+                    '</p>' +
+                    '</div>' +
+                    '</a>' +
+                    '</div>'
+                );
+            });
+            var len = 0;
+            if(ret){
+                len = ret.length
+            }
+            cursor = cursor + len;
+            completed = len === 0;
+            loading = false;
+            if (completed) {
+                $(document.body).destroyInfinite();
+                $('#section').append('<div class="list">已加载完毕</div>');
+            }
+
+        });
+
+    }
+</script>
+{/block}

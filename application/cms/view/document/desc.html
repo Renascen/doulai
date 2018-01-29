@@ -1,0 +1,620 @@
+{extend name="public:base" /}
+{block name="link"}
+<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/introduct.css" />
+<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+{/block}
+{block name="style"}
+<style>
+    .ipt_content{
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 3rem;
+        z-index: 9999;
+        background-color: #fff;
+        padding: 0 0.34rem;
+    }
+    .ipt_bak{
+        height: 1000px;
+        width: 100%;
+    }
+    .v-c-two {
+        background: url(__MODULE_IMG__/img-png/zan.png)no-repeat center left;
+        background-size: 0.26rem 0.26rem;
+    }
+
+    /*.validity_one_type>span {*/
+        /*background: url(__MODULE_IMG__/img-png/fenlei.png)no-repeat center left;*/
+        /*background-size: 0.52rem 0.25rem;*/
+    /*}*/
+
+    .validity_autor {
+        background: url(__MODULE_IMG__/img-png/touxiangtubiao.png)no-repeat center left;
+        background-size: 0.29rem 0.29rem;
+    }
+
+    .anthology_title_left {
+        background: url(__MODULE_IMG__/img-png/xuanji.png)no-repeat center left;
+        background-size: 0.26rem 0.26rem;
+    }
+
+    .anthology_title_right {
+        background: url(__MODULE_IMG__/img-png/gengduo.png)no-repeat center right;
+        background-size: 0.29rem 0.29rem;
+    }
+
+    .comment_write {
+        background: url(__MODULE_IMG__/img-png/xiepinglunkuang.png)no-repeat center right;
+        background-size: 1.34rem 0.48rem;
+    }
+    #section{
+        margin-top: 0;
+    }
+
+    .anthology_title_right{
+        width:2rem;
+    }
+    #nav{
+        margin-top: 0.85rem;
+    }
+	.list_thr{
+		width:0.8rem;
+	}
+	.mui-toast-container{
+		bottom: 5rem;
+	}
+	.mui-toast-message{
+		padding:25px 25px;
+	}
+	.works_cover{
+		margin-top:0.8rem;
+	}
+	.d_hang{
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
+	.zhan_show{
+		margin-top: 0.1rem;
+		text-align: right;
+		color: #7040a1;
+	}
+	.v-c-two-top{
+		margin-left: 0.1rem;
+		position: relative;
+		top: 0.03rem;
+	}
+	/*.mui-toast-message{*/
+		/*position: fixed;*/
+		/*z-index: 9999999999;*/
+	/*}*/
+	.list{
+		padding: 0.2rem 0;
+		color:#999999;
+		text-align: center;
+	}
+	.vld_hid{
+		max-width: 4.5rem;
+	}
+	.v-c-one{
+		content: '';
+		display: block;
+		clear: both;
+	}
+	.v-c-one>img{
+		margin-top: 0.15rem;
+	}
+	.mask_pic{
+		box-shadow: 0 0 0 1px #eee;
+		border-radius: 0.05rem;
+	}
+	.comment_name_right>span{
+		margin-right: 0.1rem!important;
+	}
+	.comment_name_left {
+		width: 4rem;
+		padding: 0.05rem 0;
+	}
+	.comment_name_right>img{
+		margin-bottom: 0.1rem;
+	}
+	.ipt{
+		z-index: 9995!important;
+	}
+	#header{
+		z-index: 100;
+	}
+	.comment_font {
+		word-break: break-all;
+	}
+	body{
+		display: none;
+	}
+</style>
+{/block}
+{block name="nav"}{/block}
+{block name="main"}
+
+		<section id="section">
+			<!--作品图-->
+			<div class="works_cover">
+				<a href="">
+					<img src="{$share.img}" />
+				</a>
+			</div>
+			<!--内容简介-->
+			<div class="validity">
+				<div class="validity_one">
+					<div class="validity_one_title">
+
+						<p class="fl v-c-one"> <span class="font-hid vld_hid fl">{$book.title}</span>
+							{if condition="$book['xstype'] gt 0"}
+							<img src="__MODULE_IMG__/img-png/wanjie-14.png" class="fl" alt="" />
+							{else/}
+							<img class="fl" src="__MODULE_IMG__/img-png/lianzai.png" alt="" />
+							{/if}
+						{if condition="$is_like gt 0" }
+						<p class="fr v-c-two" style="background:url(/public/static/cms/img/img-png/dianzanhou-.png)no-repeat center left;background-size: 0.26rem 0.26rem;"><span class="v-c-two-top">{$book.view}</span></p>
+						{else /}
+							<p class="fr v-c-two"><span class="v-c-two-top">{$book.view}</span></p>
+						{/if}
+						<input type="hidden" id="view" value="0">
+					</div>
+					<!--清除浮动-->
+					<div class="clear"></div>
+
+					<div class="validity_one_type">
+					{volist name="$book.taglist" id="mo"}
+						<span>{$mo}</span>
+					{/volist}
+					</div>
+					<div class="validity_autor">
+					{$book.zuozhe}
+					</div>
+				</div>
+				<div class="validity_two ">
+					<p class="validity_two_content d_hang">
+						<span>简介 : </span> {$book.desc}
+					</p>
+					<p class="zhan_show">展开</p>
+				</div>
+			</div>
+			<!--选集-->
+			<div class="anthology">
+				<div class="title">
+					<div class="fl title_left anthology_title_left">
+						<span><a href="{:url('cms/column/indexidx', ['bid' => $book.id])}" style="color: #928c8e;position: relative;top: -0.03rem;">选集</a></span>
+					</div>
+					<div class="fr title_right anthology_title_right">
+						<a href="{:url('cms/column/indexidx', ['bid' => $book.id])}">连载到{$chapterLast}话</a>
+					</div>
+				</div>
+				<!--选集栏-->
+
+			</div>
+
+			<!--书币-->
+			<div class="gold">
+				<div class="gold_list" id="mouth">
+					<h3>{$month[0]['sum']}</h3>
+					<p>本月打赏</p>
+				</div>
+				<div class="gold_list" id="count">
+					<h3>{$book.tips?$book['tips']:0}</h3>
+					<p>累计打赏</p>
+				</div>
+			</div>
+
+			<!--评漫区-->
+			<div class="comment">
+				<div class="comment_title">
+					<div class="fl comment_num">
+						<h3>评漫区</h3>
+						<p><span class="num">{$book.c_total}</span>评论&nbsp;<span class="people">{$book.u_total}</span>人评论</p>
+					</div>
+					<div class="fr comment_write">
+						<a href="javascript:void(0);">
+							<img src="__MODULE_IMG__/img-png/xuepinglun.png" alt="" />
+							<span>写评论</span>
+						</a>
+					</div>
+				</div>
+				<div class="comment_content">
+					<!-- 评论 -->
+				</div>
+			</div>
+		</section>
+		<!--遮罩层-->
+		<div class="mask">
+			<!--点击顶部关闭-->
+			<div class="mask_top"></div>
+			<div class="mask_content">
+				<div class="mask_one clear">
+					<img class="fl mask_pic" src="{$book.image|get_thumb}" />
+					<div class="fl mask_wenz">
+						<p class="wenz_one font-hid">{$book.title}</p>
+						<p class="wenz_two font-hid">书币余额 <span>{$user.score + $user.coin}</span></p>
+						<p class="wenz_thr font-hid">单部作品可打赏8个书币</p>
+					</div>
+				</div>
+				<div class="mask_two">
+					<!--<p>打赏书币 <span>(今日剩余 <span class="bi_num">{$num}</span> 个)</span></p>-->
+					<p>打赏书币 <span>(今日剩余 <span class="bi_num">{$num}</span> 个)</span></p>
+				</div>
+				<div class="mask_thr">
+					<ul class="mask_all">
+						<li class="mask_index" value="1">1 书币</li>
+						<li class="mask_index" value="2">2 书币</li>
+						<li class="mask_index default_choose" value="3">3 书币</li>
+						<li class="mask_index" value="4">4 书币</li>
+						<li class="mask_index" value="5">5 书币</li>
+						<li class="mask_index" value="6">6 书币</li>
+						<li class="mask_index" value="7">7 书币</li>
+						<li class="mask_index" value="8">8 书币</li>
+					</ul>
+				</div>
+				<div class="mask_four">
+					确认打赏
+				</div>
+			</div>
+		</div>
+
+		<!--弹出输入框-->
+		<div class="ipt">
+            <div class="ipt_bak"></div>
+            <div class="ipt_content">
+				<div class="ipt_one">
+					<span class="fl ipt_cancel">取消</span>
+					<span class="fr ipt_send">发送</span>
+				</div>
+				<div class="ipt_two">
+					<textarea id="ipt_text" name="" rows="" cols=""></textarea>
+				</div>
+				<div class="ipt_thr">
+					<p>还可以输入 <span class="ipt_num">200</span>/200个字</p>
+				</div>
+			</div>
+		</div>
+		<footer id="footer">
+			<div class="first_line">
+					{if condition="$is_collect gt 0"}
+					<a href="javascript:void(0);" >已收藏</a>
+					{else /}
+					<a href="javascript:void(0);">收藏本书</a>
+					{/if}
+			</div>
+			<div class="mask_toggle">
+				<a href="javascript:void(0);"><img src="__MODULE_IMG__/img-png/dashang.png" />打赏</a>
+			</div>
+			<div class="try_read">
+				<a href="/index.php/cms/document/detail/id/{$readCid}.html?updateReadHistory=true">
+                    {if empty($readCfg)}开始阅读{else /}继续阅读{/if}</a>
+			</div>
+		</footer>
+
+{/block}
+{block name="page-script"}
+
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+	<script type="text/javascript">
+        window.onload=function(){
+            document.querySelector('body').style.display="block";
+        }
+
+        var bid= '{$book.id}';
+        var apiurl = '/index.php/cms/document/getComment';
+        var cursor = 0;
+        var loading = false;
+        var limit = 5;
+        var completed = false;
+
+        loadList(cursor);
+        $(document.body).infinite(50).on('infinite', function () {
+            if (loading || completed) {
+                return false;
+            }
+
+            loadList(cursor);
+        });
+
+        function loadList(start) {
+            loading = true;
+            return $.get(apiurl, {bid:bid ,start: start, limit: limit}, function (ret) {
+                // 如果第一次加载没有数据
+                if (start==0 && ret==''){
+                    $(".list").remove()
+                    $(".comment_content").append("<div class='list'>暂无人评论</div>");
+                    return false
+				}
+                    $.each(ret, function () {
+                        var entry = this;
+                        zanImg = ($.inArray('{$user.id}', entry.zan_list) != -1)?'zaned.png':'zan.png';
+                        $('.comment_content').append(
+                            '<div class="comment_man">\n' +
+                            '\t\t\t\t\t\t<div class="comment_pic fl">\n' +
+                            '\t\t\t\t\t\t\t<a href="javascript:void(0);">\n' +
+                            '\t\t\t\t\t\t\t\t<img src="'+entry.avatar+'" />\n' +
+                            '\t\t\t\t\t\t\t</a>\n' +
+                            '\t\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t\t<div class="comment_msg fr">\n' +
+                            '\t\t\t\t\t\t\t<div class="comment_name">\n' +
+                            '\t\t\t\t\t\t\t\t<h3 class="fl comment_name_left font-hid">'+entry.nickname+'</h3>\n' +
+                            '\t\t\t\t\t\t\t\t<p class="fr comment_name_right" data-id="' + entry.id + '"><span class="zan_total">'+entry.zan+'</span><img src="__MODULE_IMG__/'+zanImg+'" alt="" /></p>\n' +
+                            '\t\t\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t\t\t<p class="comment_time">\n' +
+                            '\t\t\t\t\t\t\t\t'+ entry.date+'</span>\n' +
+                            '\t\t\t\t\t\t\t</p>\n' +
+                            '\t\t\t\t\t\t\t<p class="comment_font">'+entry.content +'</p>\n' +
+                            '\t\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t</div>'
+                        );
+                    });
+                var len = 0;
+                if(ret){
+                    len = ret.length
+                }
+                cursor = cursor + len;
+                completed = len === 0;
+                loading = false;
+                if (completed) {
+                    $(document.body).destroyInfinite();
+                    $('.comment_content').append('<div class="list">已加载完毕</div>');
+                }
+
+            });
+
+        }
+        $(".comment_content").on('click',".comment_name_right",addZan);
+       // 选中打赏票数
+        $(".mask_all").on("click", ".mask_index", function() {
+            $(this).addClass("default_choose").siblings().removeClass("default_choose");
+
+        })
+
+        //打赏打开
+        $(".mask_toggle").click(function() {
+            $(".mask").show();
+        })
+        //打赏关闭
+        //		var mark_top_header=$(window).height()-$(".mask").height();
+        //		$(".mask_top").css('height',mark_top_header);
+        $(".mask_top").click(function(){
+            $(".mask").hide();
+        })
+        //确认打赏
+        //设置每天可打赏书币个数
+
+
+
+        $(".mask_four").click(function(){
+            if($(".bi_num").html()<=0 ){
+                mui.toast('今日打赏已用完');
+                return false;
+            }else if($(".default_choose").val() > $(".bi_num").html()){
+                mui.toast('超出可打赏书币');
+                return false;
+			}else{
+
+                var mouth =  $("#mouth>h3").html() ;
+                var count =  $("#count>h3").html() ;
+                var money = $(".wenz_two>span").html();
+                var shanVal=$(".default_choose").val();
+                //ajax
+                $.post("/index.php/cms/document/tips",{bid:'{$book.id}',num:shanVal,type:2},function(result) {
+
+                    mui.toast(result.message,'long');
+                    $(".mask").hide();
+
+                    if (result.status == 1) {
+                        num = $(".bi_num").html();
+                        num = num- result.total;
+                        $(".bi_num").html(num);
+
+                        $("#mouth>h3").html(parseInt(mouth)+parseInt(shanVal));
+                        $("#count>h3").html(parseInt(count)+parseInt(shanVal));
+                        $(".wenz_two>span").html(parseInt(money)-parseInt(shanVal));
+
+                    }
+                })
+            }
+        })
+
+
+        //写评论
+        $("#ipt_text").click(function(){$(this).focus()});
+        $(".comment_write").click(function(){
+            $(".ipt").show();
+            $("#ipt_text").trigger('click');
+        })
+        //隐藏输入框
+        $(".ipt_bak").click(function(){
+            $(".ipt").hide();
+            $("#ipt_text").val("");
+            $(".ipt_num").html("200");
+        })
+        $(".ipt_cancel").click(function(){
+            $(".ipt_bak").trigger("click");
+            $("#ipt_text").val("");
+            $(".ipt_num").html("200");
+        });
+        //发送
+        $(".ipt_send").click(function(){
+
+            if(send_state ==true) {
+                var num = $(".num").html();
+                var people = $(".people").html();
+                var sendVal = trim($("#ipt_text").val());
+                //ajax
+
+                $.post('{:url("cms/document/comment")}', {'comment': sendVal, 'bid': '{$book.id}'}, function (ret) {
+                    if (ret.people!=false){
+                        $(".people").html(parseInt(people)+1);
+                    }
+                    if (ret.status != 1) {
+                        mui.toast(ret.message, 'long');
+                        return false;
+                    }
+                    mui.toast(ret.message, 'long');
+                    $("#ipt_text").val("");//发送成功后清除内容
+					// 成功后立即追加评论到第一条
+//                    $(".comment_content").prepend('<div class="comment_man">\n' +
+//                        '\t\t\t\t\t\t<div class="comment_pic fl">\n' +
+//                        '\t\t\t\t\t\t\t<a href="javascript:void(0);">\n' +
+//                        '\t\t\t\t\t\t\t\t<img src="'+ret.avatar+'" />\n' +
+//                        '\t\t\t\t\t\t\t</a>\n' +
+//                        '\t\t\t\t\t\t</div>\n' +
+//                        '\t\t\t\t\t\t<div class="comment_msg fr">\n' +
+//                        '\t\t\t\t\t\t\t<div class="comment_name">\n' +
+//                        '\t\t\t\t\t\t\t\t<h3 class="fl comment_name_left font-hid">'+ret.nickname+'</h3>\n' +
+//                        '\t\t\t\t\t\t\t\t<p class="fr comment_name_right" data-id="' + ret.id + '"><span class="zan_total">0</span><img src="__MODULE_IMG__/zan.png" alt="" /></p>\n' +
+//                        '\t\t\t\t\t\t\t</div>\n' +
+//                        '\t\t\t\t\t\t\t<p class="comment_time">\n' +
+//                        '\t\t\t\t\t\t\t\t'+ret.date+'</span>\n' +
+//                        '\t\t\t\t\t\t\t</p>\n' +
+//                        '\t\t\t\t\t\t\t<p class="comment_font">'+ret.content+'</p>\n' +
+//                        '\t\t\t\t\t\t</div>\n' +
+//                        '\t\t\t\t\t</div>');
+                   // window.location.reload();
+                    stay();
+                    $(".ipt_num").html("200");
+                    $(".num").html(parseInt(num)+1);
+                    $(".ipt_bak").trigger("click");
+                    if ($('.list').length != 0)
+                    {
+                        $(".list").html('已显示所有评论');
+
+					}
+                })
+            }else{
+                if (send_code == 1){
+                    mui.toast('您已超出限制字数', 'long');
+                    return false;
+                    $(".ipt").hide();
+				}
+                mui.toast('评论内容不能为空', 'long');
+                return false;
+                $(".ipt").hide();
+			}
+        });
+        //监听输入字数的变化
+		var send_code = 0;
+        var send_state=false;
+        var ipt_text=document.getElementById("ipt_text");
+        ipt_text.oninput=function(){
+            //console.log($(this).val().length);
+            var surplus=200-$(this).val().length;
+            if(surplus>0){
+
+                $(".ipt_thr").html('<p>还可以输入 <span class="ipt_num">'+surplus+'</span>/200个字</p>').css('color','#333');
+                send_state=true;
+            }else {
+                $(".ipt_thr").html("您已经超出了限制字数").css('color', '#e4393c').css('font-size','0.28rem');
+                send_state = false;
+                send_code = 1;
+            }
+
+        }
+
+        //去掉俩端空格
+
+        function trim(str) {
+            return str.replace(/(^\s*)|(\s*$)/g, "");
+        }
+
+        var index=0; // 0为投票，1为推荐
+
+        var stat=1; //数量
+	// 收藏本书
+        $('.first_line').on('click', function(){
+            $.post("/index.php/cms/document/operate",{bid:'{$book.id}',num:stat,type:index,collect:'collect'},function(data){
+                mui.toast(data.msg,{ duration:'long', type:'div' });
+//                $.toast(data.msg);
+                $('.first_line>a').html('已收藏');
+            })
+
+        })
+
+		// 赞本书
+		var zanc = $(".v-c-two").text();
+
+            $(".v-c-two").on('click',function () {
+				if(!{$is_like}) {
+					if ($("#view").val() == 0){
+						$.post("/index.php/cms/document/desc", {bid: '{$book.id}', zan: zanc}, function (data) {
+							$(".v-c-two-top").text(data.zan);
+							$(".v-c-two").attr('style', 'background:url(/public/static/cms/img/img-png/dianzanhou-.png)no-repeat center left;background-size: 0.26rem 0.26rem;')
+							$("#view").val(1);
+						})
+					}else{
+						return false;
+					}
+				}else{
+					return false;
+				}
+            });
+
+
+        function addZan(){
+
+            obj = $(this);
+            var zan = parseInt(obj.children('.zan_total').text());
+            var id = obj.attr('data-id');
+            if(obj.children('img').attr('src').indexOf('zaned.png') != -1){
+                return false;
+            }
+                $.post('{:url("cms/document/comment")}', {'operate': 'addZan', 'id': id}, function (ret) {
+                    if (ret.status == 1) {
+                        obj.children('.zan_total').html(zan + 1);
+                        obj.children('img').attr('src', '__MODULE_IMG__/zaned.png');
+                      
+                    } else {
+                        return false;
+                    }
+                })
+
+
+        }
+
+
+		// 展开简介
+        var toggle=false;
+        $(".zhan_show").click(function(){
+            $('.validity_two_content').toggleClass('d_hang');
+            if(toggle===false){
+                $(this).html('收回');
+                toggle=true;
+            }else{
+                $(this).html('展开');
+                toggle=false;
+            }
+
+        })
+
+		function stay(){
+			window.onbeforeunload = function () {
+				var scrollPos;
+				if (typeof window.pageYOffset != 'undefined') {
+					scrollPos = window.pageYOffset;
+				}
+				else if (typeof document.compatMode != 'undefined' && document.compatMode != 'BackCompat') {
+					scrollPos = document.documentElement.scrollTop;
+				}
+				else if (typeof document.body != 'undefined') {
+					scrollPos = document.body.scrollTop;
+				}
+				document.cookie = "scrollTop=" + scrollPos; //存储滚动条位置到cookies中
+			}
+
+			window.onload = function () {
+				if (document.cookie.match(/scrollTop=([^;]+)(;|$)/) != null) {
+					var arr = document.cookie.match(/scrollTop=([^;]+)(;|$)/); //cookies中不为空，则读取滚动条位置
+					document.documentElement.scrollTop = parseInt(arr[1]);
+					document.body.scrollTop = parseInt(arr[1]);
+				}
+			}
+        }
+	</script>
+
+{/block}

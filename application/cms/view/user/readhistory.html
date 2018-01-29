@@ -1,0 +1,24 @@
+
+{volist name='history' id='vo'}
+  <div class="novel-item click-item readhistory-list">           
+    <div class="novel-image list">
+      <a href="/index.php/cms/document/detail/id/{$vo.zid}">
+        {if condition="!empty($vo.image)"}
+        <img src="{$vo.image|get_thumb}" style="border: #d5c3ab 1px solid">
+        {else /}
+        <img src="{$vo.cover}" style="border: #d5c3ab 1px solid" alt="">
+        {/if}
+      </a>
+    </div>
+    <a href="/index.php/cms/document/detail/id/{$vo.zid}" >
+        <div class="novel-info novel-title" style="padding-left: 5px;box-sizing: border-box;font-size:14px">
+          <div style="color:#000;font-size:16px">{$vo.btitle}</div>
+          <div class="flex1 fcd6a465" style="margin-top:2px">{$vo.author}</div>
+          <div class="novel-summary" style="color:#666;margin-top:2px"><a href="/index.php/cms/document/detail/id/{$vo.zid}">{$vo.ctitle}</a></div>
+          <div class="count" style="margin-top:3px;color:#999">
+            {:date('m-d H:i', $vo.update_time)}
+          </div>
+        </div>
+    </a>
+  </div>
+{/volist}

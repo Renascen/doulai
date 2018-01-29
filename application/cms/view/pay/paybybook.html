@@ -1,0 +1,111 @@
+{extend name="public:base"}
+{block name="style"}
+<link type="text/css" rel="stylesheet" href="__MODULE_CSS__/read.css?time={:time()}">
+    <style>
+      .f14{font-size: 14px}
+      .f20{font-size: 20px}
+      .pt10{padding: 10px 0 0 0}
+      .pt5{padding-top: 5px}
+      .mt5{margin-top: 5px}
+      .reading{padding:10px 15px;}
+    </style>
+
+{/block}
+ {block name="main"}
+		<!--阅读页-->
+		<section class="reading">
+			<!--通知-->
+			<!--通知 end-->
+				<!-- <p class="here f14">
+					<a href="/index.php/cms/document/desc/id/{$chapter}" title="">{$book.title}</a>
+					<b>&gt;</b>
+					<a href="/index.php/cms/column/indexidx/id/5/bid/{$book['id']}.html" title="">章节目录</a>
+				</p> -->
+				<!-- <div style="flex:3;text-align: center;"> -->
+					<div style="text-align: center;">
+					<!-- <div style="text-align: center;"> -->
+						<img style="width: 55%" src="{$book.avtar}" alt="">
+					</div>
+					<!-- <div style="flex:10;"> -->
+						<p class="f20 pt10">{$book.title}  <span style="font-size: 13px; color: #999999">{$book.xstype} | {$book.zishu}字</span></p>
+						<p class="f14" style="color: #999999">作者：{$book.zuozhe}</p>
+						<section class="pt5 mt5" style=";border-top: 1px solid #f4f4f4;">
+						<p class="pt5" style="font-size: 10px">
+						<!-- <span class="f14" style="color: #999999; padding: 5px auto">作者：{$book.zuozhe}  </span> -->
+						{volist name="book.taglist" id="val"}
+							<span style="padding: 1px 5px;text-align:center;border:1px solid #cfcfcf;color: #999999;border-radius:2px;">{$val}</span>
+
+						{/volist}
+						</p>
+						</section>
+					<!-- </div> -->
+				<!-- </div> -->
+
+				<!--全本订阅收费支付-->
+				<section class="read_pay"style="margin-top: 10px ">
+					<p class="read_zj" style="font-size: 18px;line-height: 35px">全本价格：<b style="font-size: 24px">{$book.price / 100.0}元</b><em style="text-decoration:line-through;font-size: 14px">{$book.total / 100.0}元</em></p>
+					<p class="read_myicon" data-money="0" style="font-size: 18px;line-height: 35px">账户余额：<b style="font-size: 24px"><span id="money"><?php echo ($user['score'] + $user['coin'])/100;?></span>元</b></p>
+					{if condition="$book['price'] gt ($user['score'] + $user['coin'])"}
+						<p><a href="{:url('cms/pay/index',['bid' => $book.id, 'cid' => $chapter])}" class="only20 bd3 tick_orderAll" data-money="{$book.price}" style="padding: 8px 0px;margin: 10px 0px ;font-size: 20px;">账户余额不足，前往充值</a></p>
+					{else /}
+						<p><a id="confirm" style="background:#21A7EE;padding: 5px 0px;margin: 10px 0px ;font-size: 20px;" class="only20 bd3 tick_orderAll" data-money="{$book.price}">全本购买</a></p>
+					{/if}
+					<div>
+							<p style="font-size: 16px; color: #9f9f9f;line-height: 30px">
+							温馨提示：<br>
+							1、此书为优质出版图书，按照全本定价折扣销售，购买之后可以阅读该书全部章节。<br>
+                            2、支付即可阅读收费章节，没有书币的需要先充值。
+                            </p>
+		        	</div>
+		        </section>
+		        <!--全本订阅收费支付 end-->
+		</section>
+	<!--阅读页 end-->
+	
+	<!-- <div class="weui_tabbar">
+        <a href="{:url('cms/index/index')}" class="weui_tabbar_item">
+            <div class="weui_tabbar_icon">
+                <i class="iconfont icon-home"></i>
+            </div>
+            <p class="weui_tabbar_label">首页</p>
+        </a>
+        <a href="{:url('cms/search/index')}" class="weui_tabbar_item">
+            <div class="weui_tabbar_icon">
+                <i class="iconfont icon-search"></i>
+            </div>
+            <p class="weui_tabbar_label">搜索</p>
+        </a>
+        <a href="{:url('cms/pay/index')}" class="weui_tabbar_item">
+            <div class="weui_tabbar_icon">
+                <i class="iconfont icon-diamond"></i>
+            </div>
+            <p class="weui_tabbar_label">充值</p>
+        </a>
+        <a href="{:url('cms/user/index')}" class="weui_tabbar_item">
+            <div class="weui_tabbar_icon">
+                <i class="iconfont icon-account"></i>
+            </div>
+            <p class="weui_tabbar_label">个人中心</p>
+        </a>
+    </div> -->
+</div>
+{/block}
+{block name="page-script"}
+<script>
+	$('#confirm').on('click', function(){
+		$.post('/index.php/cms/pay/paybybook/', {
+			bid:'{$book.id}',
+			zid:'{$chapter}',
+			isPost:'1'
+		},function(ret){
+			if(ret.status == 4){
+				$('#money').text(ret.curscore/100);
+				$.toast(ret.message);
+				location.href = '{:url("cms/document/detail", ["id" => $chapter])}'
+			}else{
+        		$.toast(ret.title);
+			}
+		})
+	})
+</script>
+{/block}

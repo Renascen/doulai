@@ -1,0 +1,287 @@
+{extend name="public:base"}
+		<title>{block name="title"}书库{/block}</title>
+		{block name="link"}
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/library.css" />
+		<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+		{/block}
+		{block name="style"}
+		<style type="text/css">
+			.new_autor {
+				background: url(__MODULE_IMG__/img-png/touxiangtubiao.png)no-repeat center left;
+				background-size: 0.31rem 0.31rem;
+			}
+
+			.zan {
+				background: url(__MODULE_IMG__/img-png/zan.png)no-repeat center left;
+				background-size: 0.22rem 0.22rem;
+			}
+
+			.r_msg {
+				background: url(__MODULE_IMG__/img-png/pinglun.png)no-repeat center left;
+				background-size: 0.22rem 0.22rem;
+			}
+			.list_thr{
+				width:0.8rem;
+			}
+			.list_title{
+				width:0.7rem;
+			}
+			.list{
+				padding: 0.2rem 0;
+				color:#999999;
+				text-align: center;
+			}
+            body{
+                display: none;
+            }
+		</style>
+	{/block}
+{block name="nav"}
+		<nav id="nav" class="clear">
+			<div class="type">
+				<div class="fl list_title">
+					类型 :
+				</div>
+				<div class="fl list_content">
+					<p class="activeChoose book_sort" key="" >全部</p>
+					<p  key="2" class="book_sort" >男生</p>
+					<p  key="3" class="book_sort" >女生</p>
+				</div>
+			</div>
+			<div class="classify">
+				<div class="fl list_title">
+					分类 :
+				</div>
+				<div class="fl list_content change_type">
+					<p class="activeChoose" id="all_sort" key="">全部</p>
+					{volist name="category" id='vo'}
+					<p key="{$vo.tstype}">{$vo.name}</p>
+					{/volist}
+				</div>
+			</div>
+			<div class="works">
+				<div class="fl list_title">
+					作品 :
+				</div>
+				<div class="fl list_content">
+					<p class="activeChoose"  key="">全部</p>
+					<p key="1">完结作品</p>
+					<p key="0">连载作品</p>
+				</div>
+			</div>
+		</nav>
+{/block}
+
+{block name="main"}
+		<section id="section">
+		</section>
+
+<div class="empty" style="width:100%;text-align: center;background: #fff;display: none">
+	<img src="__MODULE_IMG__/list_empty.png" alt="" style="width:30%">
+	<div style="padding:10px 0px;color:#c9c9c9;font-size:16px">暂时没有相关漫画</div>
+</div>
+{/block}
+
+	{block name="page-script"}
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+	<script type="text/javascript">
+
+        window.onload=function(){
+            document.querySelector('body').style.display="block";
+        }
+
+        var tstype = '';
+        var xstype = '';
+
+        var apiurl = '/index.php/cms/column/doajax';
+
+        var cursor = 0;
+
+        var limit = 5;
+        var sex = '';
+        $(function () {
+
+            var loading = false;
+
+            var completed = false;
+            // $('.filter span').click(function()
+            $("#nav").on('click', 'p', function () {
+
+                cursor = 0;
+                $('#section').html("");
+                $(this).siblings().removeClass('activeChoose');
+                $(this).addClass('activeChoose');
+                sex = $('.type .activeChoose').attr('key');
+                tstype = $('.classify .activeChoose').attr('key');
+                if ($(this).hasClass("book_sort")) {
+                    tstype = $('.classify #all_sort').attr('key');
+                }
+                // /**********确认所选类别是否有此类型************/
+                //   $.ajax({
+
+                //     url: '/index.php/cms/column/confirm2cate',
+                //     type: 'GET',
+                //     data: {'cid':sex,'tstype':tstype},
+                //     dataType: 'text',
+                //     async :false,
+                //     success:function(data){
+                //          changecate(data);
+                //     }
+                //   });
+                //  function changecate(str){
+                //       if (str==1) {
+                //           tstype = $('.cate .active').attr('key');
+                //       }
+                //       if (str==0) {
+                //           tstype = $('.cate #all_sort').attr('key');
+                //       }
+                //   }
+                /**********确认所选类别是否有此类型************/
+                xstype = $('.works .activeChoose').attr('key');
+                loadList(cursor);
+                $(document.body).infinite(50).on('infinite', function () {
+
+                    if (loading || completed) {
+                        return false;
+
+                    }
+
+
+
+                    loadList(cursor);
+
+
+                });
+            });
+            loadList(cursor);
+
+            /**********分类************/
+            $(document).on('click', '.book_sort', function () {
+//                 tstype = $('.cate #all_sort').attr('key');
+                var sex = $('.type .activeChoose').attr('key');
+                $.ajax({
+                    url: '/index.php/cms/column/cid2sort',
+                    type: 'GET',
+                    data: {'cid': sex, 'tstype': tstype},
+                    success: function (entries) {
+                        $(".change_type>p:first").nextAll().remove();
+                        $("#all_sort").addClass('active');//全部分类
+                        var htmls = [];
+                        $.each(entries, function () {
+                            var entry = this;
+                            htmls.push(
+                                "<p key=" + entry.tstype + ">" + entry.name + "</p>"
+                            );
+
+                        });
+                        $('.change_type').append(htmls.join(''));
+//                        $('.change_type').prepend(a);
+//                        $.ajax({
+//                            url: '/index.php/cms/column/cid2resort',
+//                            type: 'GET',
+//                            data: {'cid': sex, 'tstype': tstype},
+//                            dataType: 'json',
+//                            async: false,
+//                            success: function (data) {
+//                                gochange(data);
+////
+//                            }
+//                        });
+                    }
+
+                });
+
+                /**********重新选择类别后是否还包含此分类************/
+
+//                function gochange(data) {
+//                    if (data.code == 1) {
+//                          var kv=data.tstype;
+//                          alert(data.tstype);
+//                           $('.cate span[key='+tstype]).addClass('active');
+//                          $(".cate span[key="+data.tstype+"]").addClass('active');
+//                    }
+//                    if (data.code == 0) {
+//                        $(".change_type").addClass('active');//全部分类
+//                    }
+//
+//                }
+
+                /**********重新选择类别后是否还包含此分类************/
+
+            })
+                /**********分类************/
+            $(document.body).infinite(50).on('infinite', function () {
+
+                if (loading || completed) {
+                    return false;
+
+                }
+
+                loadList(cursor);
+
+
+            });
+
+
+                function loadList(start)
+				{
+                    $('.empty').hide();
+                    loading = true;
+                    return $.get(apiurl, {start: start, limit: limit, tstype: tstype, xstype: xstype, sex: sex},
+						function (entries) {
+                        var htmls = [];
+                        if (entries.length == 0 && $(".new_list").length == 0) {
+                            $('.empty').show();
+                            return false;
+                        }
+                        $.each(entries.data, function () {
+                            var entry = this;
+                            var url = '/index.php/cms/document/desc/bid/' + entry.id + '';
+                            var img = entry.serial == 1 ? '__MODULE_IMG__/img-png/wanjie-14.png':"__MODULE_IMG__/img-png/lianzai.png";
+                            htmls.push(
+                                '<div class="new_list clear">' +
+                                '<a href=" ' +url+ ' " class="clear">' +
+                                '<img class="fl" src="' + entry.avatar + ' " alt="" />' +
+                                '<div class="fr new_tro">' +
+                                '<h3 class="new_title font-hid">'
+                                +entry.title+
+                               	'<img src="'+img+'">'+
+                                '</h3>' +
+                                '<p class="new_msg dou_hang"> ' +entry.summary+ ' </p>' +
+                                '<div class="new_change">' +
+                                '<div class="new_autor fl">' +entry.zuozhe+ '</div>' +
+                                '<div class="new_reply fl">' +
+                                '<p class="zan">'+entry.view+'</p>' +
+								'<p class="r_msg">'+entry.num+'</p>'+
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</a>' +
+                                '</div>'
+							)
+                        });
+
+                        $('#section').append(htmls.join(''));
+
+                        if (entries.data) {
+                            len = entries.data.length
+                        }
+                        cursor = cursor + len;
+                        completed = len < limit;
+                        loading = false;
+                        if (completed) {
+                            $(document.body).destroyInfinite();
+                            $('.list').remove();
+                            $('#section').append("<div class='list'>已为小主加载完成</div>");
+                        }
+
+                    });
+
+                }
+
+            });
+
+
+
+	</script>
+{/block}

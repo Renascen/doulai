@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>{block name="title"}{:config('web_site_title')}{/block}</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+	<meta content="telephone=no" name="format-detection" />
+	{block name="meta"}{/block}
+	<link rel="shortcut icon" href="__ADMIN_IMG__/favicons/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/base.css" />
+	<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/mui.min.css" />
+	{block name="link"}{/block}
+	<script src="__MODULE_JS__/fontSize.js"></script>
+	{block name="script"}
+	{/block}
+	{block name="style"}
+	<style type="text/css">
+		.list_thr{
+			width: 0.8rem;!important;
+		}
+	</style>
+	{/block}
+	</head>
+{block name="header"}
+	<body>
+	{block name="head"}
+	<header id="header" class="clear">
+		<div class="fl header_left" style="width: 2.3rem;height: 0.86rem;margin-left: 0.12rem;">
+			<a href="{:url('index/index')}"><img src="__MODULE_IMG__/img-png/doulaiicon.png" alt="" /></a>
+		</div>
+		<div class="fr header_right">
+			<ul>
+				<!--{block name="search"}-->
+				<li class="list_one">
+					<a href="{:url('cms/search/index')}"><img src="__MODULE_IMG__/img-png/sousuo.png" /></a>
+				</li>
+				<!--{/block}-->
+				<li class="fengge">|</li>
+				<li class="list_two">
+					<a href="{:url('cms/user/booksheet_temp')}"><img style="margin-bottom: 0.08rem;" src="__MODULE_IMG__/img-png/shujia.png" /><span style="margin-top: 0!important;">书架</span></a>
+				</li>
+				<li class="fengge">|</li>
+				<li class="list_thr">
+					<a href="{:url('user/index')}"><img src="__MODULE_IMG__/img-png/wode.png" /></a>
+				</li>
+			</ul>
+		</div>
+	</header>
+	{/block}
+{/block}
+
+	{block name="lunbo"}{/block}
+	{block name="nav"}
+	<nav id="nav">
+		<div>
+			<a href="{:url('index/booklibrary')}"><img src="__MODULE_IMG__/img-png/shuku.png" alt="" /><p>书库</p>
+			</a>
+		</div>
+		<div>
+			<a href="{:url('column/index', ['id' => 2])}"><img src="__MODULE_IMG__/img-png/paihang.png" alt="" /><p>排行</p>
+			</a>
+		</div>
+		<div>
+			<a href="{:url('index/many',['type'=>-1])}"><img src="__MODULE_IMG__/img-png/wanjie.png" alt="" /><p>完结</p>
+			</a>
+		</div>
+		<div>
+			<!--<a href="{:url('cms/pay/index')}"><img src="__MODULE_IMG__/img-png/chonghzi.png" alt="" /><p>充值</p></a>-->
+			<a href="{:url('pay/index')}"><img src="__MODULE_IMG__/img-png/chonghzi.png" alt="" /><p>充值</p></a>
+		</div>
+	</nav>
+	{/block}
+
+{block name="main"}
+{/block}
+	<script src="__MODULE_JS__/mui.js"></script>
+	<script src="__MODULE_JS__/jquery-1.8.3.min.js"></script>
+{block name="page-script"}
+{/block}
+	</body>
+	</html>

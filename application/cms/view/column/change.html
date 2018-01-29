@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>选集</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<meta content="yes" name="apple-mobile-web-app-capable" />
+		<meta content="black" name="apple-mobile-web-app-status-bar-style" />
+		<meta content="telephone=no" name="format-detection" />
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/base.css" />
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/change.css" />
+		<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+		<script src="__MODULE_JS__/fontSize.js"></script>
+
+		<style type="text/css">
+			.title_right {
+				background: url(__MODULE_IMG__/img-png/shengxu.png)no-repeat center left;
+				background-size: 0.25rem 0.25rem;
+			}
+			.list{
+				color:#999999;
+				text-align: center;
+			}
+
+		</style>
+	</head>
+
+	<body>
+	<header id="header" class="clear">
+		<div class="fl header_left">
+			<a href="{:url('index/index')}"><img src="__MODULE_IMG__/img-png/doulaiicon.png" alt="" /></a>
+		</div>
+		<div class="fr header_right">
+			<ul>
+				<!--{block name="search"}-->
+				<li class="list_one">
+					<a href="{:url('cms/search/index')}"><img src="__MODULE_IMG__/img-png/sousuo.png" /></a>
+				</li>
+				<!--{/block}-->
+				<li class="fengge">|</li>
+				<li class="list_two">
+					<a href="{:url('cms/user/booksheet')}"><img src="__MODULE_IMG__/img-png/shujia.png" /><span>书架</span></a>
+				</li>
+				<li class="fengge">|</li>
+				<li class="list_thr">
+					<a href="{:url('user/index')}"><img src="__MODULE_IMG__/img-png/wode.png" /></a>
+				</li>
+			</ul>
+		</div>
+	</header>
+		<!--模拟背景-->
+		<div class="mockBcg">
+			
+		</div>
+		<!--选集头部-->
+		<div class="change_title">
+			<div class="title">
+				<div class="fl title_left">
+					<span>选集</span>
+				</div>
+				<div class="fr title_right">
+
+					{if condition="$orderby eq desc"}
+					<span id="asc" class="orderby">升序</span>
+					{else /}
+					<span id="desc" class="orderby">降序</span>
+					{/if}
+				</div>
+			</div>
+		</div>
+		<!--选集内容-->
+		<div class="change_comment clear">
+
+		</div>
+
+	</body>
+	<script src="__MODULE_JS__/mui.js"></script>
+	<script src="__MODULE_JS__/jquery-1.8.3.min.js"></script>
+	<script src="__MODULE_JS__/jquery-weui.js"></script>
+	<script type="text/javascript">//下拉加载
+    //
+    var bid = {$bid};
+    var cursor = 0;
+    $(function () {
+        $(".orderby").click(function(){
+            var opt = $(this).attr('id');
+            var url = location.href;
+            var pos = url.indexOf('.html');
+            if(pos != -1){
+                url = url.substr(0, pos);
+            }
+            location.href = url + '/orderby/' + opt;
+        })
+        var loading = false;
+        var completed = false;
+        var from = '';
+
+        loadCatalogEntries(cursor);
+
+    $(document.body).infinite(50).on('infinite', function () {
+        if (loading || completed) {
+            return false;
+        }
+
+        loadCatalogEntries(cursor);
+    });
+
+        function loadCatalogEntries(start) {
+            loading = true;
+            var opt = $('.orderby').attr('id');
+            if(opt == 'asc'){
+                opt = 'desc'
+            }else{
+                opt = 'asc'
+            }
+            return $.get('/index.php/cms/column/doajaxidx', {start: start,bid: bid,orderby:opt}, function (entries) {
+                var htmls = [];
+                if(entries != ''){
+
+                    $.each(entries.data, function () {
+                        var entry = this;
+                        var url='/index.php/cms/document/detail/id/'+entry.id+'';
+                        entry.title = entry.title || '第' + entry.idx + '章';
+                        if(entry.isvip == 1){
+                            entry.isvip = ' <img class="change_vip" src="__MODULE_IMG__/img-png/VIP.png" alt="" />';
+                        }else if(entry.isvip == 2){
+                            entry.isvip = '';
+                        }else if(entry.isvip == 3){
+                            entry.isvip = '<span class="change_xm" id="history">继续阅读</span>';
+                        }else if(entry.isvip == 4){
+                            entry.isvip = '<span class="change_xm">限免</span>';
+                        }else if(entry.isvip == 5){
+                            entry.isvip = '<span class="change_xm">免费</span>';
+						}else{
+                            entry.isvip = '';
+						}
+                        if(entry.title.length > 15){
+                            entry.title = entry.title.substr(0, 16) + '...';
+                        }
+
+
+                        htmls.push(
+                            '   <div class="change_list">\n' +
+                            '        <a href="'+url+'">\n' +
+                            '          <img class="fl change_pic" src="'+entry.image+'" alt="" />\n' +
+                            '                 <div class="change_nct fl">\n' +
+                            '                    <p class="change_nct_one">\n' +
+                            '                    <span>第'+entry.idx+'话</span>\n' +
+                            '                <span>'+entry.title+'</span>\n' +
+                            '                </p>\n' +
+                            '                <div class="change_nct_two">\n' +
+                            '                    <p class="fl">'+entry.time+'</p>\n' +
+                            '                <p class="fr change_zan">\n' +
+                            '                    </p>\n' +
+                            '                    </div>\n' +
+                            '                    </div>\n' +
+                            '                    </a>\n' +
+							'<div class="change_msg">'+entry.isvip +'</div>'+
+                            '                </div>'
+                        );
+                    });
+				}
+
+                $('.change_comment').append(htmls.join(''));
+                var len = 0;
+                if(entries.data){
+                    len = entries.data.length
+                }
+                cursor = cursor + len;
+                completed = len === 0;
+
+                loading = false;
+            if (completed) {
+
+                $(document.body).destroyInfinite();
+                $('.change_comment').append('<div class="list" style="padding: 0.2rem 0;">已加载完毕</div>');
+            }
+            });
+        }
+    });
+
+
+
+	</script>
+
+</html>

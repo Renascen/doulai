@@ -1,0 +1,124 @@
+{extend name="public:base" /}
+
+		<title>{block name="title"}{:config('web_site_title')}{/block}</title>
+		{block name="link"}
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/stacks.css" />
+		{/block}
+
+		{block name="style"}
+		<style type="text/css">
+			.recharge_view{
+				background: url(__MODULE_IMG__/img-png/gengduo.png)no-repeat center right;
+				background-size: 0.26rem 0.26rem;
+			}
+			.s_title-r{
+				background: url(__MODULE_IMG__/img-png/gengduo.png)no-repeat center right;
+				background-size: 0.26rem 0.26rem;
+			}
+			.list_thr{
+				width:0.8rem;
+			}
+			.balance{
+				height:2.5rem;
+			}
+			.bal_msg{
+				height:1.3rem;
+			}
+			.subscribe_content{
+				margin: 0 auto;
+			}
+		</style>
+		{/block}
+	</head>
+{block name="nav"}{/block}
+	{block name="main"}
+	<body>
+		<!--读者ID-->
+		<div id="ID" class="clear"> 
+			<div class="fl ID_Tuo">
+				<img src="{$user['avatar']}" alt="" />
+			</div>
+			<div class="fl ID_Code">
+				<h3 class="codeName font-hid">{$user['nickname']}</h3>
+				<p class="codeNum font-hid">ID:{$user['id']}</p>
+			</div>
+		</div>
+		<!--余额信息-->
+		<div class="balance">
+			<div class="bal_msg">	
+				<div class="bal_book">
+					<p class="fl mdg_left">
+						<span class="bi">书币余额:</span>
+						<span class="yu">{$user['coin']+$user['score']}币</span>
+					</p>
+					<div class="fr sub_Recharge">
+						<a href="{:url('pay/index')}">充值</a>
+					</div>
+				</div>
+				<!--<div class="bal_other">-->
+					<!--<p class="fl mdg_left other_mar">-->
+						<!--<span class="bi">其它余额:</span>-->
+						<!--<span class="yu_o">{$user['score']}币</span>-->
+					<!--</p>-->
+				<!--</div>-->
+				<!--<div class="bal_pointer">-->
+					<!--<p class="fl mdg_left other_mar">-->
+						<!--<span class="bi">会员积分:</span>-->
+						<!--<span class="yu_o">200分</span>-->
+					<!--</p>-->
+				<!--</div>-->
+			</div>
+			<div class="bal-recode clear">
+				<a href="{:url('cms/user/payhistory')}">
+					<div class="fl recharge_Record">
+						<img class="recharge_img" src="__MODULE_IMG__/img-png/chongzhijilu.png"/>
+						<span class="recharge_lu">充值记录</span>
+					</div>
+					<div class="fr recharge_view">
+						<a href="{:url('cms/user/payhistory')}">查看</a>
+					</div>
+				</a>
+			</div>
+		</div>
+		
+		<!--订阅-->
+		<div class="subscribe clear">
+			<div class="subscribe_title clear">
+				<div class="fl s_title-l">
+					<img class="s_title-img" src="__MODULE_IMG__/img-png/dingyuejilu.png"/>
+					<span class="s_title-til">订阅记录</span>
+				</div>
+				<div class="fr s_title-r">
+					<a href="{:url('index/history')}"></a>
+				</div>
+			</div>
+			<div class="subscribe_content">
+				{volist name="history" id="vo"}
+				<div class="_content_list">
+					<a href="/index.php/cms/document/detail/id/{$vo.zid}/bid/{$vo.bid}.html?updateReadHistory=true">
+						<div class="_content_list_k" >
+							<img src="{$vo.images}" alt="" />
+							<span class="ss_num font-hid">第{$vo.idx}话</span>
+						</div>
+						<p class="_content_list_t font-hid">{$vo.btitle}</p>
+					</a>
+				</div>
+				{/volist}
+			</div>
+			</div>
+		</div>
+
+		<!---->
+		<!--&lt;!&ndash;退出登陆&ndash;&gt;-->
+		<!--<div class="drop_Out">-->
+			<!--<a href="{:url('cms/Oauth/logout')}">退出登陆</a>-->
+		<!--</div>-->
+	</body>
+	{/block}
+	{block name="page-script"}
+	<script type="text/javascript">
+		
+	</script>
+{/block}
+
+</html>

@@ -1,0 +1,189 @@
+{extend name="public:base" /}
+
+<title>{block name="title"}更多{/block}</title>
+
+{block name="link"}
+<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+<link rel="stylesheet" href="__MODULE_CSS__/index.css">
+{/block}
+{block name="style"}
+		<style type="text/css">
+			body {
+			    min-width: 320px;
+			    max-width: 720px;
+			    margin: 0 auto;
+			    overflow-scrolling: touch;
+			    -webkit-overflow-scrolling: touch;
+			    position: relative;
+			    font-family: "Microsoft Yahei",Arial,Helvetica,sans-serif;
+			    font-size: .24rem;
+			    color: #333333;
+				background: #fff;
+			}
+			.font-hid {
+			  overflow: hidden;
+			  -o-text-overflow: ellipsis;
+			  text-overflow: ellipsis;
+			  white-space: nowrap;
+			  word-wrap: normal;
+			}
+			#section{
+				padding: 0.3rem 0.3rem;
+
+				margin-top: 0.6rem;
+			}
+			.section_list{
+			    width: 6.5rem;
+				margin: 0 auto 0.5rem;
+				border-radius: 0.1rem;
+			}
+			.list_l{
+				width: 100%;
+				height: 4.35rem;
+			}
+			.list_l>img{
+				width: 100%;
+				height: 4.35rem;
+				border-radius: 0.1rem;
+			}
+			.list_r{
+				width: 100%;
+				margin-top: 0.1rem;
+				padding: 0 0.15rem 0.1rem;
+			}
+			.list_r:after{
+				content: '';
+				display: block;
+				clear: both;
+			}
+			.list_name{
+				width: 100%;
+			    color: #333;
+			    font-size: 0.32rem;
+			}
+			.list_name:after{
+				content: '';
+				display: block;
+				clear: both;
+			}
+			.list_pic{
+				width: 0.47rem!important;
+    			height: 0.24rem!important;
+    			margin-left: 0.1rem;
+    		margin-top: 0.1rem;
+			}
+			.list_name_w{
+				max-width: 5rem;
+			}
+			.list_tro{
+				width: 100%;
+				margin-top: 0.05rem;
+			}
+			.list_tro:after{
+				content: '';
+				display: block;
+				clear: both;
+			}
+			.list_tro_l{
+				width: 4rem;
+			}
+			.font-col{
+				color: #999;
+			}
+			.font_yan{
+				color: #333;
+			}
+			.list_tro_pic{
+				width: 0.31rem!important;
+				height: 0.31rem!important;
+			}
+			.list_tro_r{
+				color: #333;
+			}
+			.list_name_w:after,.list_pic:after,.section_list:after{
+				content: '';
+				display: block;
+				clear: both;
+			}
+			.list{
+				color:#999999;
+				text-align: center;
+			}
+			.section_list {
+				box-shadow: 1px 1px 8px #ddd;
+			}
+		</style>
+{/block}
+{block name="nav"}{/block}
+{block name="main"}
+<body>
+		
+		<section id="section">
+
+
+		</section>
+	</body>
+	{/block}
+	{block name="page-script"}
+	<script src="__MODULE_JS__/jquery-weui.js"></script>
+	<script>
+        var limit = 10;
+        var cursor = 0;
+
+        loadCatalogEntries(cursor);
+
+        $(document.body).infinite(100).on('infinite', function () {
+            if (loading || completed) {
+                return false;
+            }
+            loadCatalogEntries(cursor);
+        });
+
+
+        function loadCatalogEntries(start) {
+            loading = true;
+            return $.get('/index.php/cms/index/history', {start: start,limit:limit}, function (entries) {
+                var htmls = [];
+                if(entries != ''){
+                    $.each(entries, function () {
+                        var entry = this;
+                        var url='/index.php/cms/document/detail/id/'+entry.zid+'/bid/'+entry.bid+'.html?updateReadHistory=true';
+                        var serial = entry.xstype == 0 ? '__MODULE_IMG__/img-png/lianzai.png':'__MODULE_IMG__/img-png/wanjie-14.png'
+                        htmls.push(
+                        	'<div class="section_list">\n' +
+                            '\t\t\t\t<a href="'+url+'">\n' +
+                            '\t\t\t\t\t<div class="list_l">\n' +
+                            '\t\t\t\t\t\t<img src="'+entry.images+'"/>\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t\t<div class="list_r">\n' +
+                            '\t\t\t\t\t\t<p class="font-hid list_name"><span class="font-hid list_name_w fl">'+entry.title+'</span><img class="fl list_pic" src="'+serial+'" alt="" /></p>\n' +
+                            '\t\t\t\t\t\t<div class="list_tro">\n' +
+                            '\t\t\t\t\t\t\t<p class="fl list_tro_l font-hid"><span class="font-col">阅读至 : </span><span class="font_yan">'+entry.ztitle+' </span> </p>\n' +
+                            '\t\t\t\t\t\t\t<p class="fr list_tro_r"><img class="list_tro_pic" src="__MODULE_IMG__/img-png/touxiangtubiao.png" alt="" />'+entry.zuozhe+'</p>\n' +
+                            '\t\t\t\t\t\t</div>\n' +
+                            '\n' +
+                            '\t\t\t\t\t</div>\n' +
+                            '\t\t\t\t</a>\n' +
+                            '\t\t\t</div>'
+                        );
+                    });
+                }
+                $('#section').append(htmls.join(''));
+                var len = 0;
+                if(entries){
+                    len = entries.length
+                }
+                cursor = cursor + len;
+
+                completed = len === 0;
+
+                loading = false;
+                if (completed) {
+
+                    $(document.body).destroyInfinite();
+                    $('#section').append('<div class="list">已加载完毕</div>');
+                }
+            });
+        }
+	</script>
+{/block}

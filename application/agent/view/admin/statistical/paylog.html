@@ -1,0 +1,156 @@
+{extend name="$_admin_base_layout" /}
+
+{block name="content"}
+   
+   <div class="row" id="order-summary-stats-panel">
+    <div class="col-md-3">
+        <div class="well">
+            <b>
+                今日充值 <i class="fa fa-question-circle" title=""></i>
+                
+            </b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                ¥<span data-bind="price: stats_today.paid_amount">{$pay_today['pay_num']}</span>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>普通充值</strong>
+                        <div><b class="text-primary" data-bind="price: stats_today.welth_order_paid_amount">{$pay_today['pay_ptnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_today.welth_order_paid_count">{$pay_today['pay_ptok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_today.welth_order_unpaid_count">{$pay_today['pay_ptno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_today.welth_order_completion_rate() * 100)">{$pay_today['pay_ptp']}</span> %</b>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>年费VIP会员</strong>
+                        <div><b class="text-primary" data-bind="price: stats_today.vip_order_paid_amount">{$pay_today['pay_vipnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_today.vip_order_paid_count">{$pay_today['pay_vipok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_today.vip_order_unpaid_count">{$pay_today['pay_vipno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_today.vip_order_completion_rate() * 100)">{$pay_today['pay_vipp']}</span> %</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="well">
+            <b>昨日充值</b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                ¥<span data-bind="price: stats_yesterday.paid_amount">{$pay_yesterday['pay_num']}</span>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>普通充值</strong>
+                        <div><b class="text-primary" data-bind="price: stats_yesterday.welth_order_paid_amount">{$pay_yesterday['pay_ptnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_yesterday.welth_order_paid_count">{$pay_yesterday['pay_ptok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_yesterday.welth_order_unpaid_count">{$pay_yesterday['pay_ptno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_yesterday.welth_order_completion_rate() * 100)">{$pay_yesterday['pay_ptp']}</span> %</b>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>年费VIP会员</strong>
+                        <div><b class="text-primary" data-bind="price: stats_yesterday.vip_order_paid_amount">{$pay_yesterday['pay_vipnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_yesterday.vip_order_paid_count">{$pay_yesterday['pay_vipok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_yesterday.vip_order_unpaid_count">{$pay_yesterday['pay_vipno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_yesterday.vip_order_completion_rate() * 100)">{$pay_yesterday['pay_vipp']}</span> %</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="well">
+            <b>本月充值 <i class="fa fa-question-circle" ></i> </b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                ¥<span data-bind="price: stats_this_month.paid_amount">{$pay_month['pay_num']}</span>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>普通充值</strong>
+                        <div><b class="text-primary" data-bind="price: stats_this_month.welth_order_paid_amount">{$pay_month['pay_ptnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_this_month.welth_order_paid_count">{$pay_month['pay_ptok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_this_month.welth_order_unpaid_count">{$pay_month['pay_ptno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_this_month.welth_order_completion_rate() * 100)">{$pay_month['pay_ptp']}</span> %</b>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>年费VIP会员</strong>
+                        <div><b class="text-primary" data-bind="price: stats_this_month.vip_order_paid_amount">{$pay_month['pay_vipnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_this_month.vip_order_paid_count">{$pay_month['pay_vipok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_this_month.vip_order_unpaid_count">{$pay_month['pay_vipno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_this_month.vip_order_completion_rate() * 100)">{$pay_month['pay_vipp']}</span> %</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="well">
+            <b>累计充值  <i class="fa fa-question-circle"></i> </b>
+            <div class="text-primary" style="font-size:32px;margin:5px 0">
+                ¥<span data-bind="price: stats_all_time.paid_amount">{$pay_all['pay_num']}</span>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>普通充值</strong>
+                        <div><b class="text-primary" data-bind="price: stats_all_time.welth_order_paid_amount">{$pay_all['pay_ptnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_all_time.welth_order_paid_count">{$pay_all['pay_ptok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_all_time.welth_order_unpaid_count">{$pay_all['pay_ptno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_all_time.welth_order_completion_rate() * 100)">{$pay_all['pay_ptp']}</span> %</b>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="padding:0">
+                        <strong>年费VIP会员</strong>
+                        <div><b class="text-primary" data-bind="price: stats_all_time.vip_order_paid_amount">{$pay_all['pay_vipnum']}</b></div>
+                        <div>已支付: <b class="text-warning" data-bind="text: stats_all_time.vip_order_paid_count">{$pay_all['pay_vipok']}</b> 笔</div>
+                        <div>未支付: <b class="text-warning" data-bind="text: stats_all_time.vip_order_unpaid_count">{$pay_all['pay_vipno']}</b> 笔</div>
+                        <div>
+                            完成率: <b class="text-warning"><span data-bind="text: Math.round(stats_all_time.vip_order_completion_rate() * 100)">{$pay_all['pay_vipp']}</span> %</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+   
+   
+
+{// 额外HTML代码 }
+{$extra_html|default=''}
+{/block}
+
+{block name="style"}
+    {volist name="css_list" id="vo"}
+    <link rel="stylesheet" href="__MODULE_CSS__/{$vo}.css">
+    {/volist}
+
+    {// 额外CSS代码 }
+    {$extra_css|default=''}
+{/block}
+
+{block name="script"}
+
+    {volist name="js_list" id="vo"}
+    <script src="__MODULE_JS__/{$vo}.js"></script>
+    {/volist}
+
+    {// 额外JS代码 }
+    {$extra_js|default=''}
+{/block}

@@ -1,0 +1,416 @@
+{extend name="public:base"}
+
+		<title>{block name="title"}我的书架{/block}</title>
+	{block name="link"}
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/bookshelf.css" />
+<link rel="stylesheet" href="__MODULE_CSS__/weui.min.css">
+	{/block}
+{block name="style"}
+		<style type="text/css">
+			html{
+				height:100%;
+			}
+			.thumb-novel-list{
+				background: #fff;
+			}
+			.thumb-novel-list:after{
+				content: '';
+				display: block;
+				clear: both;
+			}
+			.thumb-novel-list .novel-item{
+				margin: 0px 1.5%;
+				width: 30.3%;
+				padding: 0px;
+				background: #fff;
+				margin-top: 10px;
+				position: relative;
+				border: 1px solid rgba(214,164,101,0.14);
+			}
+			#section {
+				margin-top: 0.88rem;
+				/*padding: 0 0.2rem 0.5rem 0;*/
+				padding-bottom: 0.2rem;
+			}
+			.dingy{
+				width: 50%;
+				text-align: center;
+				margin-top: 1rem;
+				margin-left: 0.2rem;
+				font-size: 0.28rem;
+			}
+			.bianji{
+				width: 100%;
+				height: 0.8rem;
+				line-height: 0.8rem;
+			}
+			.b_font{
+				text-align: right;
+				margin-right: 0.3rem;
+			}
+			.b_font_c{
+				color: #E4393C;
+			}
+			.b_chexiao{
+				margin-right: 0.3rem;
+			}
+			.caozuo{
+				width: 1.94rem;
+				height: 3.8rem;
+				text-align: center;
+				line-height: 0.3rem;
+			}
+			.list{position: relative;}
+			.caozuo{
+				position: absolute;
+				bottom: -0.1rem;
+				right: 0.15rem;
+			}
+			.caozuo>img{
+				width: 0.35rem;
+				height: 0.35rem;
+				display: none;
+				position: absolute;
+				right: 0.1rem;
+				bottom: 0.2rem;
+			}
+			.caozuo_f{
+				display: inline-block;
+				width: 0.35rem;
+				height: 0.35rem;
+				border-radius: 50%;
+				border:0.02rem solid #D9AE77;
+				display: none;
+				position: absolute;
+				right: 0.1rem;
+				bottom: 0.2rem;
+			}
+			.c_active{display: block!important;}
+			.dingy{
+				width: 50%;
+				text-align: center;
+				margin-top: 0.5rem;
+				margin-left: 0.2rem;
+				font-size: 0.28rem;
+			}
+			body{
+				display: none;
+			}
+			.list_thr{
+				width:0.8rem!important;
+			}
+			#section:after{
+				content:'';
+				display: block;
+				clear: both;
+			}
+			.loader_end{
+				margin: 0 auto;
+				text-align: center;
+				color: #999999;
+			}
+			.readed {
+				width: 0.91rem;
+				height: 0.52rem;
+				position: absolute;
+				left: 0.05rem;
+				top: -0.5rem;
+			}
+		</style>
+{/block}
+{block name="nav"}{/block}
+{block name="main"}
+
+		<section id="section">
+			<div class="bianji">
+				<p class="b_font bji_clk">编辑</p>
+				<p class="b_font  bji_cz" style="display: none;"><span class="b_chexiao">撤销</span> <span class="b_font_c">删除</span></p>
+			</div>
+
+			<!--  用户没有收藏任何漫画 -->
+			<div class="thumb-novel-list" style="padding: 0px 10px;padding-left: 15px;padding-bottom: 10px; display:none">
+				<div class="novel-item fl" style="min-height: 200px">
+					<a href="/index.php/cms/index/index.html">
+						<img src="/public/static/cms/img/add.png" alt="" style="width:80px;position: absolute;left:50%;margin-left:-40px;top:50%;margin-top:-40px">
+					</a>
+				</div>
+				<p class="fl dingy">你还没收藏本站的漫画哦~</p>
+			</div>
+
+
+
+		</section>
+
+		<div class="loader_end">
+
+		</div>
+
+{/block}
+{block name="page-script"}
+<script src="__MODULE_JS__/jquery-weui.js"></script>
+	<script type="text/javascript">
+
+
+        var apiurl = '/index.php/cms/user/booksheet_temp';
+        var cursor = 0;
+        var loading = false;
+        var limit = 9;
+        var completed = false;
+
+        loadList(cursor);
+        $(document.body).infinite(50).on('infinite', function () {
+
+            if (loading || completed) {
+                return false;
+            }
+
+            loadList(cursor);
+        });
+
+        function loadList(start) {
+            loading = true;
+            return $.get(apiurl, {start: start, limit: limit}, function (ret) {
+                // 如果第一次加载没有数据
+				//console.log(ret.length)
+                if (start==0 && ret.length == 0){
+                   $('.thumb-novel-list').attr('style','display:block')
+                   $('.bianji').attr('style','display:none')
+                    return false
+                }
+                $('.list_addP').remove();
+                $.each(ret,function (index,item) {
+                    $("#section").append('<div class="list">' +
+                        '<a href="/index.php/cms/document/detail/id/'+item.zid+'/bid/'+item.bid+'.html?updateReadHistory=true">' +
+                        '<div class="list_content">' +
+                        '<img class="list_img" src="'+item.image+'"/>' +
+                        '<p class="list_title font-hid">'+item.title+'</p>' +
+                        '<p class="list_zuo font-hid">'+item.zuozhe+'</p>' +
+                        '<div class="progger">' +
+                        '<span class="proshow"></span>' +
+                        '<p class="proval">'+item.rate+'%</p>' +
+                        '<p class="unread">未读</p>' +
+                        '<img class="readed" src="__MODULE_IMG__/img-png/yiyuewan.png"/>' +
+                        '</div>' +
+                        '</div>' +
+                        '</a>' +
+                        '<div class="caozuo" style="display: none;">' +
+                        '<span class="caozuo_f c_active"></span>' +
+                        '<img id="'+item.id+'" src="__MODULE_IMG__/img-png/selbox.png"/>' +
+                        '</div>' +
+                        '</div>');
+
+                    	rate(); //恢复到编辑的效果
+                 //   $(".b_chexiao").trigger('click');
+                });
+				if($('.bji_clk').css('display')!='none'){
+                    addStr();
+				}
+                if($('.bji_clk').css('display')!='block'){
+				    $('.caozuo').show();
+				}
+                var len = 0;
+                if(ret){
+                    len = ret.length
+                }
+                cursor = cursor + len;
+                completed = len === 0;
+
+                loading = false;
+                if (completed) {
+                    $(document.body).destroyInfinite();
+                    if($('.bji_clk').css('display')!='none'){
+						if($('.list').length==1){
+							$('.loader_end').append('<span style="padding: 0.2rem 0;">你还没有收藏漫画哦</span>');
+						}else{
+                            $('.loader_end').append('<span style="padding: 0.2rem 0;">已加载完毕</span>');
+						}
+                    }else if($('.bji_clk').css('display')!='block'){
+                        if($('.list').length==1) {
+                            $('.loader_end').append('<span style="padding: 0.2rem 0;">已加载完毕</span>');
+                        }
+					}
+
+                }
+            });
+
+        }
+
+
+		// 编辑书架信息
+        window.onload=function(){
+            $("body").show();
+        }
+		function rate() {
+			var length=$(".progger").length;
+			for(var i=0;i<length;i++){
+				var pro=$(".proval").eq(i).html();
+				if(pro=='100%'){
+					$(".proshow").eq(i).hide();
+					$('.proval').eq(i).hide();
+					$(".unread").eq(i).hide();
+					$('.readed').eq(i).show();
+					$(".progger").eq(i).css("background","none");
+				}else if(pro=="0%"){
+					$(".proshow").eq(i).hide();
+					$('.proval').eq(i).hide();
+					$('.readed').eq(i).hide();
+					$(".unread").eq(i).show();
+					$(".progger").eq(i).css("background","none");
+				}else{
+					$('.readed').eq(i).hide();
+					$(".unread").eq(i).hide();
+					$(".progger .proshow").eq(i).css("width",pro);
+					$(".progger").eq(i).css("background","#E6E6E6");
+				}
+
+			}
+		}
+		rate();
+
+        //勾选编辑的内容
+        var c_toggle=false;
+       $("#section").on('click',".caozuo",function(){
+            if(c_toggle==false){
+                $(this).children().toggleClass('c_active');
+                c_toggle=true;
+            }else if(c_toggle==true){
+                $(this).children().toggleClass('c_active');
+                c_toggle=false;
+            }
+        })
+        //点击编辑
+        $('.bji_clk').click(function(){
+            $(this).hide();
+            $(".bji_cz").show();
+            $(".caozuo").show();
+            $('.list_addP').remove();
+        })
+        //点击完成
+        	//$(this).hide();
+        	//$(".bji_clk").show();
+        //撤销
+        $("#section").on('click',".b_chexiao",function(){
+            $('.caozuo_f ').addClass('c_active');
+            $('.caozuo>img ').removeClass('c_active');
+            c_toggle=true;
+            $(".caozuo").hide();
+            $(".bji_clk").show();
+            $(".bji_cz").hide();
+            addStr();
+        });
+        //删除
+
+        $("#section").on('click','.b_font_c',function(){
+            var length=$('.caozuo>img').length;
+            var str=[];
+            var len = 0;
+            for(var i=0;i<=length;i++){
+                if($('.caozuo>img').eq(i).css('display')=='block'){
+                    str.push($('.caozuo>img').eq(i).attr('id'));
+                    len++
+                }
+
+            }
+            //如果是没有删除内容时，隐藏编辑框
+
+
+            rate(); //恢复到编辑的效果
+
+           $.post('/index.php/cms/user/delbooksheet',{ids:str},function (data) {
+               if(data.status == 1){
+
+					// 这里将选中的书移除掉 然后发送ajax请求
+					for(var i=0;i<str.length;i++){
+                        str[i]="#"+str[i];
+					}
+					for(var i=0;i<str.length;i++){
+					    $(str[i]).parents('.list').remove();
+					}
+
+
+
+					$.get('/index.php/cms/user/booksheet_temp',{start:cursor,limit:len},function (ret) {
+						if(ret){
+							$.each(ret,function (index,item) {
+                                $("#section").append('<div class="list">' +
+                                    '<a href="/index.php/cms/document/detail/id/'+item.zid+'/bid/'+item.bid+'.html?updateReadHistory=true">' +
+                                    '<div class="list_content">' +
+                                    '<img class="list_img" src="'+item.image+'"/>' +
+                                    '<p class="list_title font-hid">'+item.title+'</p>' +
+                                    '<p class="list_zuo font-hid">'+item.zuozhe+'</p>' +
+                                    '<div class="progger">' +
+                                    '<span class="proshow"></span>' +
+                                    '<p class="proval">'+item.rate+'%</p>' +
+                                    '<p class="unread">未读</p>' +
+                                    '<img class="readed" src="__MODULE_IMG__/img-png/yiyuewan.png"/>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</a>' +
+                                    '<div class="caozuo" style="display: none;">' +
+                                    '<span class="caozuo_f c_active"></span>' +
+                                    '<img id="'+item.id+'" src="__MODULE_IMG__/img-png/selbox.png"/>' +
+                                    '</div>' +
+                                    '</div>')
+
+                            });
+                            var len = 0;
+                            if(ret){
+                                len = ret.length
+                            }
+                            cursor = cursor + len;
+
+						}
+						if($('.list').length>1){
+                            $(".b_chexiao").trigger('click');
+						}
+
+                        if($('.list').length==1){
+                            $('.bianji').html('');
+
+                        }
+//                        if($('.bji_clk').css('display')!='none'){
+//                            if($('.list').length==1){
+//                                $('.loader_end>span').html('你还没收藏漫画');
+//                       	 }
+//                        }else if($('.bji_clk').css('display')!='block'){
+//
+//                                $('.loader_end>span').html('已加载完毕');
+//
+//						}
+						 //没内容时显示的页面效果
+		               if($('.list').length==0){
+							var str=`<div class="thumb-novel-list" style="padding: 0px 10px;padding-left: 15px;padding-bottom: 10px">
+										<div class="novel-item fl" style="min-height: 200px">
+											<a href="/index.php/cms/index/index.html">
+												<img src="/public/static/cms/img/add.png" alt="" style="width:80px;position: absolute;left:50%;margin-left:-40px;top:50%;margin-top:-40px">
+											</a>
+										</div>
+										<p class="fl dingy">你还没收藏本站的漫画哦~</p>
+									</div>`;
+							$("#section").append(str);
+							$(".bianji").hide();
+							$('.loader_end').hide();
+		               }
+                    })
+               }
+              
+           })
+            //ajax
+        })
+
+		//添加去首页的框
+        function addStr(){
+            var str=`<div class="list list_addP">
+							<a href="/index.php/cms/index/index.html">
+							<div class="list_content" style="height:3.85rem;">
+							<img src="/public/static/cms/img/add.png" alt="" style="width:80px;position: absolute;left:50%;margin-left:-40px;top:50%;margin-top:-40px">
+							</div>
+							</a>
+						</div>`;
+            $("#section").append(str);
+        }
+
+
+
+	</script>
+{/block}

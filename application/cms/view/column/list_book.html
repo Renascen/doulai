@@ -1,0 +1,169 @@
+{extend name="public:base" /}
+		{block name="link"}
+		<link rel="stylesheet" type="text/css" href="__MODULE_CSS__/ranking.css" />
+		{/block}
+	{block name="style"}
+		<style type="text/css">
+			.list_thr{
+				width:0.8rem;
+			}
+			body{
+				display: none;
+			}
+			.search_list>a{
+				display: block;
+				width: 100%;
+				height:100%;
+			}
+			.search_list>a:after,.rank_list:after,.search_img:after,.search_list_r:after{
+				content: '';
+				display: block;
+				clear: both;
+			}
+			#nav{
+				position: fixed;
+				margin-top: 0;
+				left:0;
+				top:0.8rem;
+				border-top:0.02rem solid #ddd;
+				border-bottom:0.01rem solid #eee;
+			}
+			.search_content{
+				padding-top: 1.6rem;
+			}
+			#nav>div>a {
+				padding: 0.08rem 0.16rem;
+				color: #2D0504;
+				font-size: 0.24rem;
+			}
+			.choose_active {
+				color: #fff!important;
+				background-color: #FF705A;
+				border-radius: 0.4rem;
+			}
+		</style>
+	{/block}
+{block name="nav"}
+		<nav id="nav">
+			<div class="">
+				<a href="javascript:void(0)" class="choose_active" key="2">男生榜</a>
+			</div>
+			<div class="">
+				<a href="javascript:void(0)" key="3">女生榜</a>
+			</div>
+			<div class="">
+				<a href="javascript:void(0)" key="19">新作榜</a>
+			</div>
+			<div class="">
+				<a href="javascript:void(0)" key="18">畅销榜</a>
+			</div>
+		</nav>
+{/block}
+{block name="main"}
+		<div class="search_content">
+
+		</div>
+{/block}
+{block name="page-script"}
+<script type="text/javascript">
+    window.onload=function(){
+        document.querySelector('body').style.display="block";
+    }
+    $(function () {
+
+        var sex = 2;
+        var loading = false;
+
+        var apiurl = '/index.php/cms/column/rank';
+
+        var cursor = 0;
+
+        var limit = 10;
+
+        var completed = false;
+
+
+        $("#nav").on("click","div>a",function(){
+            $("#nav>div>a").removeClass('choose_active');
+            $(this).addClass('choose_active')
+            sex = $(this).attr('key');
+            loadList(0);
+
+        })
+        loadList(cursor);
+
+        function loadList(start) {
+            loading = true;
+            $('.search_content').html('');
+            return $.get(apiurl, {start: start, limit: limit, sex: sex}, function (entries) {
+
+                var htmls = [];
+                var spa = '';
+                $.each(entries.data, function (e) {
+                    var entry = this;
+
+                    $.each(entry.tag,function (index,item) {
+                        if (index == 4){
+                            return false
+						}
+                        spa  +='<span>'+item+'</span>';
+                    })
+                    var url='/index.php/cms/document/desc/id/'+entry.zid+'/bid/'+entry.id;
+					htmls.push('<div class="search_list">'+
+                        '<a href="' + url + '">'+
+                        '<div class="fl rank_list">'+
+                        (e > 2 ? '<span>' + (e + 1) + '</span>' : '<img src="__MODULE_IMG__/rank_' + (e + 1) + '.png" alt="" />') +
+                        '</div>'+
+                        '<div class="fl search_img">'+
+                        '<img src="'+entry.avatar+'"/>'+
+                        '</div>'+
+                        '<div class="fl search_list_r">'+
+                        '<p class="list_r_one">'+ entry.title +'</p>'+
+                        '<p class="list_r_upd font-hid">'+
+                        '更新至:'+ entry.idx +'话'+
+                    	'</p>'+
+                   		'<p class="list_r_two">'
+							+spa+
+                        '</p>'+
+                        '<p class="list_r_thr">'+
+                        '<img src="__MODULE_IMG__/img-png/touxiangtubiao.png"/>'+
+                        entry.zuozhe+
+                        '</p>'+
+                        '</div>'+
+                        '</a>'+
+                        '</div>')
+					spa = '';
+
+                });
+
+
+				$('.search_content').html('');
+                $('.search_content').append(htmls.join(''));
+                var len = 0;
+
+                if(entries.data){
+                    len = entries.data.length
+                }
+                cursor = cursor + len;
+                completed = len < limit;
+
+
+
+                loading = false;
+
+
+
+                if (completed) {
+                    $(document.body).destroyInfinite();
+                }
+
+            });
+
+        }
+
+    });
+
+
+
+</script>
+{/block}

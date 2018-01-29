@@ -1,0 +1,25 @@
+<style>
+	.weui_cells{margin-top:0px;}
+      .hd{padding:7px 0px;text-align: center;width:100%;line-height: 30px;font-weight: bold;font-size:18px;color:#333;background:#FEFDF8;border-bottom: 1px #f3f3f3 solid; position: fixed;z-index: 9}
+      .sum{display:flex;padding:15px 10px;background:#fff;border-bottom:1px solid #d9d9d9;}
+      .left,.right,.select_z{padding:8px;}
+      .left{flex:2;text-align: left}
+      .right{flex:3;text-align: right}
+      .select_z{flex:3;text-align: left;border:1px solid #d6a464;padding:8px 10px;border-radius: 5px}
+      .back{flex:1;}
+      .title{flex:6;}
+      .home{flex:1;padding-bottom:0px;}
+      .chapter_col{display: flex}
+      .chapter_title{flex:9;}
+      .chapter_isvip{flex:1;}
+      .title{overflow:hidden;text-overflow:ellipsis;-webkit-box-orient: vertical;-webkit-line-clamp:1;display: -webkit-box;}
+</style>
+<div class="hd {if isset($zpay)}hd_buy{/if}">
+  <div style="width:100%;display: flex;">
+  {if  empty($tgid) || (!empty($tgid) && empty($f))}
+      <a href="{:url('cms/document/desc', array('bid' => empty($bid)?$book['id']:$bid))}" class="back"><!-- <i class="iconfont icon-prev"></i> <--><img src="__MODULE_IMG__/back.png" alt="" style="width:39%;padding-top: 10%"></--></a><div class="title"><em>{if($document['title'] == '')}目录{else /}{$document['title']}{/if}</em></div><a class="home" href="{:url('cms/index/index')}"><!-- <i class="iconfont icon-home"></i> <--><img src="__MODULE_IMG__/home.png" alt="" style="width:39%;padding-top: 9%"></--></a>
+  {else /}
+    <div class="title"><em>{if($document['title'] == '')}目录{else /}{$document['title']}{/if}</em></div>
+  {/if}
+  </div>
+</div>
